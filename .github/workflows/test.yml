@@ -1,4 +1,4 @@
-name: manual-deployment
+name: test-deployment
 on:
   workflow_dispatch:
 permissions:
