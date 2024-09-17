@@ -1,0 +1,59 @@
+name: manual-deployment
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  AssumeRole:
+    runs-on: [ ubuntu-latest ]
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        role-to-assume: arn:aws:iam::777452866223:role/github-actions
+        role-session-name: stage
+        aws-region: us-east-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+      with:
+        mask-password: 'true'
+
+    - name: Extract version tag
+      id: extract_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+    - name: Build and tag image for stage-frontend
+      id: stage-frontend
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPO: stage-frontend
+        IMAGE_TAG: "${{ env.VERSION }}"
+      run: |
+        cd frontend
+        docker build -t stage-frontend:latest .
+        docker tag stage-frontend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+        echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    # - name: Fill in the new image ID in the Amazon ECS task definition
+    #   id: task-def-ui
+    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+    #   with:
+    #     task-definition: ui/prominence-providers-ui.json
+    #     container-name: ui
+    #     image: ${{ steps.build-ui.outputs.image }}
+
+    # - name: Deploy Amazon ECS task definition
+    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+    #   with:
+    #     task-definition: ${{ steps.task-def-ui.outputs.task-definition }}
+    #     service: dev-ui
+    #     cluster: prominence-providers-dev
+    #     wait-for-service-stability: true
+    
