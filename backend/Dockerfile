@@ -4,6 +4,6 @@ RUN apt-get update && apt-get install -y python3 python3-pip
 
 RUN pip install flask 
 
-COPY service2.py /opt/
+COPY backend.py /opt/
 
-ENTRYPOINT FLASK_APP=/opt/service2.py flask run --host=0.0.0.0 --port=8080
+ENTRYPOINT FLASK_APP=/opt/backend.py flask run --host=0.0.0.0 --port=8080
