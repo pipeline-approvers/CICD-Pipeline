@@ -41,19 +41,18 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    # - name: Fill in the new image ID in the Amazon ECS task definition
-    #   id: task-def-ui
-    #   uses: aws-actions/amazon-ecs-render-task-definition@v1
-    #   with:
-    #     task-definition: ui/prominence-providers-ui.json
-    #     container-name: ui
-    #     image: ${{ steps.build-ui.outputs.image }}
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def-stage-frontend
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: frontend/stage-frontend.json
+        container-name: stage-frontend
+        image: ${{ steps.stage-frontend.outputs.image }}
 
-    # - name: Deploy Amazon ECS task definition
-    #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-    #   with:
-    #     task-definition: ${{ steps.task-def-ui.outputs.task-definition }}
-    #     service: dev-ui
-    #     cluster: prominence-providers-dev
-    #     wait-for-service-stability: true
-    
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-stage-frontend.outputs.task-definition }}
+        service: stage-frontend
+        cluster: stage
+        wait-for-service-stability: true
