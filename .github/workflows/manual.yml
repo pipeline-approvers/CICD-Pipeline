@@ -5,83 +5,90 @@ permissions:
   id-token: write
   contents: read
 jobs:
-  AssumeRole:
+  Deploying:
     runs-on: [ ubuntu-latest ]
+    environment:
+      name: stage
+      # reviewers: | # List of reviewers who must approve
+      #         madhukar-hanumanthappa
+      #         fayaz01
+    
     steps:
-    - name: Clone repository
-      uses: actions/checkout@v4
+      - name: Clone repository
+        uses: actions/checkout@v4
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
-      with:
-        role-to-assume: arn:aws:iam::777452866223:role/github-actions
-        role-session-name: stage
-        aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::777452866223:role/github-actions
+          role-session-name: stage
+          aws-region: us-east-1
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-      with:
-        mask-password: 'true'
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
 
-    - name: Extract version tag
-      id: extract_version
-      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Extract version tag
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
-    - name: Build and tag image for stage-frontend
-      id: stage-frontend
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPO: stage-frontend
-        IMAGE_TAG: "${{ env.VERSION }}"
-      run: |
-        cd frontend
-        docker build -t stage-frontend:latest .
-        docker tag stage-frontend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      # - name: Build and tag image for stage-frontend
+      #   id: stage-frontend
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPO: stage-frontend
+      #     IMAGE_TAG: "${{ env.VERSION }}"
+      #   run: |
+      #     cd frontend
+      #     docker build -t stage-frontend:latest .
+      #     docker tag stage-frontend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      #     docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      #     echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def-stage-frontend
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: frontend/stage-frontend.json
-        container-name: stage-frontend
-        image: ${{ steps.stage-frontend.outputs.image }}
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def-stage-frontend
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: frontend/stage-frontend.json
+      #     container-name: stage-frontend
+      #     image: ${{ steps.stage-frontend.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def-stage-frontend.outputs.task-definition }}
-        service: stage-frontend
-        cluster: stage
-        wait-for-service-stability: true
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def-stage-frontend.outputs.task-definition }}
+      #     service: stage-frontend
+      #     cluster: stage
+      #     wait-for-service-stability: true
 
-    - name: Build and tag image for stage-backend
-      id: stage-backend
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPO: stage-backend
-        IMAGE_TAG: "${{ env.VERSION }}"
-      run: |
-        cd backend
-        docker build -t stage-backend:latest .
-        docker tag stage-backend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
-        echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+      # - name: Build and tag image for stage-backend
+      #   id: stage-backend
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPO: stage-backend
+      #     IMAGE_TAG: "${{ env.VERSION }}"
+      #   run: |
+      #    cd backend
+      #     docker build -t stage-backend:latest .
+      #     docker tag stage-backend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      #     docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+      #     echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-    - name: Fill in the new image ID in the Amazon ECS task definition
-      id: task-def-stage-backend
-      uses: aws-actions/amazon-ecs-render-task-definition@v1
-      with:
-        task-definition: backend/stage-backend.json
-        container-name: stage-backend
-        image: ${{ steps.stage-backend.outputs.image }}
+      # - name: Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def-stage-backend
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: backend/stage-backend.json
+      #     container-name: stage-backend
+      #     image: ${{ steps.stage-backend.outputs.image }}
 
-    - name: Deploy Amazon ECS task definition
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ steps.task-def-stage-backend.outputs.task-definition }}
-        service: stage-backend
-        cluster: stage
-        wait-for-service-stability: true
+      # - name: Deploy Amazon ECS task definition
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def-stage-backend.outputs.task-definition }}
+      #     service: stage-backend
+      #     cluster: stage
+      #     wait-for-service-stability: true
+      
