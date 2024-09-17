@@ -1,0 +1,73 @@
+name: manual-deployment
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  stage-deploy:
+    name: Deploy to stage
+    runs-on: ubuntu-latest
+    environment: stage
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::777452866223:role/github-actions
+          role-session-name: stage
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+        with:
+          mask-password: 'true'
+
+      - name: Extract version tag
+        id: extract_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      - name: Build and tag image for stage-frontend
+        id: stage-frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPO: stage-frontend
+          IMAGE_TAG: "${{ env.VERSION }}"
+        run: |
+          cd frontend
+          docker build -t stage-frontend:latest .
+          docker tag stage-frontend:latest $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPO:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+
+  prod-deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: stage-deploy
+    environment:
+      name: prod
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::777452866223:role/github-actions
+          role-session-name: stage
+          aws-region: us-east-1
+
+      - name: Pull Docker image from stage-frontend ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 777452866223.dkr.ecr.us-east-1.amazonaws.com
+          docker pull 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG
+            
+      - name: Push Docker image to prod ECR
+        run: |
+          docker tag 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
+          # aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 877764372323.dkr.ecr.us-west-2.amazonaws.com
+          docker push 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
