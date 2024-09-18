@@ -71,9 +71,10 @@ jobs:
         run: |
           aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 777452866223.dkr.ecr.us-east-1.amazonaws.com
           docker pull 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG
-            
-      - name: Push Docker image to prod ECR
-        run: |
           docker tag 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
-          # aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 877764372323.dkr.ecr.us-west-2.amazonaws.com
-          docker push 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
+          
+      # - name: Push Docker image to prod ECR
+      #   run: |
+      #     docker tag 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
+      #     # aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 877764372323.dkr.ecr.us-west-2.amazonaws.com
+      #     docker push 777452866223.dkr.ecr.us-east-1.amazonaws.com/prod-frontend:$IMAGE_TAG
