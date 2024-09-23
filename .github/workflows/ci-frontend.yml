@@ -1,13 +1,18 @@
 name: frontend
 on:
   push:
+    branches:
+      - main 
+    paths:
+      - 'frontend/**'
+  pull_request:
     paths:
       - 'frontend/**'
 permissions:
   id-token: write
   contents: read
 jobs:
-  deploy-frontend:
+  deploy-backend:
     runs-on: ubuntu-latest  # this is a self hosted windows server
     steps:
     - name: Checkout Code
