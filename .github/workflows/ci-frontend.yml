@@ -1,0 +1,22 @@
+name: frontend
+on:
+  push:
+    paths:
+      - 'frontend/**'
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: CORP-PHPAPI01D  # this is a self hosted windows server
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set Variables for EST Time
+      id: vars
+      run: |
+          $ESTTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+          $ESTDateTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $ESTTimeZone)
+          $Timestamp = $ESTDateTime.ToString("yyyyMMddHHmmss")
+          echo "::set-output name=timestamp::$Timestamp"
