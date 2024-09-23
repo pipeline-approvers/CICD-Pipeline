@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   deploy:
-    runs-on: CORP-PHPAPI01D  # this is a self hosted windows server
+    runs-on: ubuntu-latest  # this is a self hosted windows server
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
