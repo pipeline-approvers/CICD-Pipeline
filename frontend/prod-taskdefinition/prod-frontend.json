@@ -1,0 +1,67 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:us-east-2:863518419199:task-definition/prod-frontend",
+    "containerDefinitions": [
+        {
+            "name": "prod-frontend",
+            "image": "863518419199.dkr.ecr.us-east-2.amazonaws.com/prod-frontend:latest",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "name": "prod-frontend-80-tcp",
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "essential": true,
+            "environment": [],
+            "environmentFiles": [],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "ulimits": [],
+            "systemControls": []
+        }
+    ],
+    "family": "prod-frontend",
+    "taskRoleArn": "arn:aws:iam::863518419199:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::863518419199:role/ecsTaskExecutionRole",
+    "networkMode": "awsvpc",
+    "revision": 1,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
+    },
+    "registeredAt": "2024-09-27T04:56:47.988Z",
+    "registeredBy": "arn:aws:iam::863518419199:user/Fayaz_Terraform",
+    "tags": []
+}
