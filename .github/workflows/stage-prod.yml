@@ -57,9 +57,9 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::777452866223:role/github-actions
+          role-to-assume: arn:aws:iam::863518419199:role/action-git
           role-session-name: prod
-          aws-region: us-east-1
+          aws-region: us-east-2
 
       - name: Extract version tag
         id: extract_version
@@ -75,7 +75,7 @@ jobs:
           aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 863518419199.dkr.ecr.us-east-2.amazonaws.com
           docker push 863518419199.dkr.ecr.us-east-2.amazonaws.com/prod-frontend:$IMAGE_TAG
       
-
+      
       - name: Clone repository
         uses: actions/checkout@v4
         
