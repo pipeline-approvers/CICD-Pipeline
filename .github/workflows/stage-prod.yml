@@ -74,3 +74,24 @@ jobs:
           docker tag 777452866223.dkr.ecr.us-east-1.amazonaws.com/stage-frontend:$IMAGE_TAG 863518419199.dkr.ecr.us-east-2.amazonaws.com/prod-frontend:$IMAGE_TAG
           aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 863518419199.dkr.ecr.us-east-2.amazonaws.com
           docker push 863518419199.dkr.ecr.us-east-2.amazonaws.com/prod-frontend:$IMAGE_TAG
+      
+
+      - name: Clone repository
+        uses: actions/checkout@v4
+        
+      - name: Fill in the new image ID in the prod ECS task definition
+        id: prod-frontend
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: frontend/prod-taskdefinition/prod-frontend.json
+          container-name: prod-frontend
+          image: 863518419199.dkr.ecr.us-east-2.amazonaws.com/prod-frontend:$IMAGE_TAG
+
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.prod-frontend.outputs.task-definition }}
+          service: prod-frontend
+          cluster: prod
+          wait-for-service-stability: true
