@@ -24,10 +24,10 @@
         }
     ],
     "family": "prod-frontend",
-    "taskRoleArn": "arn:aws:iam::863518419199:role/ecsTaskExecutionRole",
-    "executionRoleArn": "arn:aws:iam::863518419199:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::863518419199:role/prominance-role-ecs-task",
+    "executionRoleArn": "arn:aws:iam::863518419199:role/prominance-role-ecs-task-execution",
     "networkMode": "awsvpc",
-    "revision": 1,
+    "revision": 5,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -61,7 +61,7 @@
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2024-09-27T04:56:47.988Z",
+    "registeredAt": "2024-09-27T11:40:40.007Z",
     "registeredBy": "arn:aws:iam::863518419199:user/Fayaz_Terraform",
     "tags": []
 }
