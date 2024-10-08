@@ -1,13 +1,15 @@
 name: backend
 on:
   push:
-    branches:
-      - main 
-    paths:
-      - 'backend/**'
-  pull_request:
-    paths:
-      - 'backend/**'
+    tags:
+      - 'release**'
+    # branches:
+    #   - main 
+    # paths:
+    #   - 'backend/**'
+  # pull_request:
+  #   paths:
+  #     - 'backend/**'
 permissions:
   id-token: write
   contents: read
