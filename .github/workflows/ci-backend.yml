@@ -1,26 +1,26 @@
-name: backend
-on:
-  push:
-    tags:
-      - 'release**'
-    # branches:
-    #   - main 
-    # paths:
-    #   - 'backend/**'
-  # pull_request:
-  #   paths:
-  #     - 'backend/**'
-permissions:
-  id-token: write
-  contents: read
-jobs:
-  deploy-backend:
-    runs-on: ubuntu-latest  # this is a self hosted windows server
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+# name: backend
+# on:
+#   push:
+#     tags:
+#       - 'release**'
+#     # branches:
+#     #   - main 
+#     # paths:
+#     #   - 'backend/**'
+#   # pull_request:
+#   #   paths:
+#   #     - 'backend/**'
+# permissions:
+#   id-token: write
+#   contents: read
+# jobs:
+#   deploy-backend:
+#     runs-on: ubuntu-latest  # this is a self hosted windows server
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v3
 
-    - name: Get TIMESTAMP
-      id: get-timestamp
-      run: |
-        echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M')"
+#     - name: Get TIMESTAMP
+#       id: get-timestamp
+#       run: |
+#         echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M')"
