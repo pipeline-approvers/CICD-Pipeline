@@ -1,7 +1,7 @@
 name: stage-prod-deployment
 on:
-  release:
-    types: [created]  # Triggers when a new release is created
+  # release:
+  #   types: [created]  # Triggers when a new release is created
   create:
     tags: "*"  # Triggers when a new tag is created
 permissions:
