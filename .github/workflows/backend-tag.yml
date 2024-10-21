@@ -2,7 +2,7 @@ name: backend-tag
 on:
   push:
     tags:
-      - 'de-release-mediverse-backend-v*.*'
+      - 'dev-release-mediverse-backend-v*.*'
 
 permissions:
   id-token: write
