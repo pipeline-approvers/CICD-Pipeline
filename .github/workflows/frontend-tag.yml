@@ -2,7 +2,7 @@ name: frontend-tag
 on:
   push:
     tags:
-      - 'dev-release-mediverse-frontend-v*.*'
+      - 'dev-release-pst-ui-v*.*'
 
 permissions:
   id-token: write
