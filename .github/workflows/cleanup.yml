@@ -1,0 +1,11 @@
+name: Cleanup Folders
+on:
+  schedule:
+  cron: "0 3 * * *" # Runs daily at 3:00 AM UTC
+    jobs:
+      cleanup:
+        runs-on: [self-hosted, windows]
+        steps:
+        - name: Run Cleanup Script
+          run: |
+              powershell.exe -ExecutionPolicy Bypass -File "C:\Path\To\CleanupFolders.ps1"
