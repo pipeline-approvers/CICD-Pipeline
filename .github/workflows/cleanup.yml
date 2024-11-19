@@ -1,11 +1,17 @@
-name: Cleanup Folders
-on:
-  workflow_dispatch:
-permissions:
-  id-token: write
-  contents: read
+name: Cleanup Folders 
+on: 
+  schedule: 
+    - cron: "21 5 * * *"
+# on:
+#  schedule:
+#     cron: "18 5 * * *"
+    
+  # workflow_dispatch:
+# permissions:
+#   id-token: write
+#   contents: read
 
-  # cron: "0 3 * * *" # Runs daily at 3:00 AM UTC
+  # cron: "18 5 * * *" # Runs daily at 3:00 AM UTC
 jobs:
   cleanup:
     runs-on: nu-laptop
