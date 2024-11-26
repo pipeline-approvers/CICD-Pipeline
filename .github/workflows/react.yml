@@ -1,1 +1,22 @@
-# deploy frontend
+name: medicaid-frontend-manual
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: nu-laptop  # this is a self hosted windows server
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        cd C:\Users\madhukar.hanumantha\Desktop\MedicaidEligibilityEnquiryFrontend
+        npm install
+
+    - name: Build App
+      run: |
+        cd C:\Users\madhukar.hanumantha\Desktop\MedicaidEligibilityEnquiryFrontend
+        npm run build
