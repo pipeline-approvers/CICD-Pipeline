@@ -1,0 +1,22 @@
+name: SQL Deploy
+
+on:
+  push:
+    paths:
+      - 'dbobjects/**'
+
+jobs:
+  build:
+    runs-on: nu-laptop
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy SQL Changes
+      uses: azure/sql-action@v2.3
+      with:
+        connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+        path: './dbobjects/YourStoredProcedures.sql'
+        action: 'publish'
+        arguments: '-p:DropObjectsNotInSource=true'
