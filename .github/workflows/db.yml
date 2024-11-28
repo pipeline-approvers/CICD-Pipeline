@@ -1,22 +1,16 @@
-name: SQL Deploy
+name: Manual SQL Deploy
 
 on:
-  push:
-    paths:
-      - 'dbobjects/**'
+  workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: nu-laptop
+  deploy:
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
 
     - name: Deploy SQL Changes
-      uses: azure/sql-action@v2.3
-      with:
-        connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-        path: './dbobjects/YourStoredProcedures.sql'
-        action: 'publish'
-        arguments: '-p:DropObjectsNotInSource=true'
+      run: |
+        sqlcmd -S Nulaptop-409 -U ${{ secrets.SQL_SERVER_USERNAME }} -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./stored-procedure/TestSotredProcedure.sql
