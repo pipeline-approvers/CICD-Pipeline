@@ -13,4 +13,4 @@ jobs:
 
     - name: Deploy SQL Changes
       run: |
-        sqlcmd -S Nulaptop-409 -U ${{ secrets.SQL_SERVER_USERNAME }} -P ${{ secrets.SQL_SERVER_PASSWORD }} -i ./stored-procedure/TestSotredProcedure.sql
+        sqlcmd -S Nulaptop-409 -U test -P test -i ./stored-procedure/TestSotredProcedure.sql
