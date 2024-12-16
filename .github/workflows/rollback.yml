@@ -50,6 +50,7 @@ jobs:
           Remove-Item -Path $folderPath\* -Recurse -Force
     
     - name: publish
+      id: run_task
       shell: powershell 
       run: |
         cd C:\Users\madhukar.hanumantha\Desktop\workspace\
@@ -57,7 +58,7 @@ jobs:
       continue-on-error: true
 
     - name: Rollback If Publish Fails
-      if: failure() || (steps.<previous-step-id>.outcome == 'failure') || (steps.<previous-step-id>.outcome ==  # Trigger this step only on failure of the previous step
+      if: failure() || (steps.run_task.outcome == 'failure') || (steps.run_task.outcome ==  # Trigger this step only on failure of the previous step
       run: |
          Write-Host "Rolling back to the latest backup..."
          $latestBackup = Get-ChildItem -Path "C:\Users\madhukar.hanumantha\Desktop\backup" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
