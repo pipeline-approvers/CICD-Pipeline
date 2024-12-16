@@ -58,7 +58,7 @@ jobs:
       continue-on-error: true
 
     - name: Rollback If Publish Fails
-      if: failure() || (steps.run_task.outcome == 'failure') || (steps.run_task.outcome ==  # Trigger this step only on failure of the previous step
+      if: failure() || (steps.run_task.outcome == 'failure') || (steps.run_task.outcome == 'error')
       run: |
          Write-Host "Rolling back to the latest backup..."
          $latestBackup = Get-ChildItem -Path "C:\Users\madhukar.hanumantha\Desktop\backup" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
