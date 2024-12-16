@@ -1,1 +1,57 @@
+name: rollback
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: nu-laptop # this is a self hosted windows server
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
+    - name: Set Variables for EST Time
+      id: vars
+      run: |
+          $ESTTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+          $ESTDateTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $ESTTimeZone)
+          $Timestamp = $ESTDateTime.ToString("yyyyMMddHHmmss")
+          echo "::set-output name=timestamp::$Timestamp"
+
+    - name: Creating Backup
+      shell: powershell
+      run: |
+          $sourcePath = "C:\Users\madhukar.hanumantha\Desktop\release"
+          $destinationPath = "C:\Users\madhukar.hanumantha\Desktop\backup"
+          $newFolderName = "test-$(${{ steps.vars.outputs.timestamp }})"
+          $newFolderPath = Join-Path -Path $destinationPath -ChildPath $newFolderName
+          # Copy the folder
+          Copy-Item -Path $sourcePath -Destination $newFolderPath -Recurse
+          Write-Output "Folder copied to $newFolderPath"
+
+    - name: Copy Code to the server
+      run: |
+        # Delete git code from the previous deployment
+        $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
+          Remove-Item -Path $folderPath\* -Recurse -Force
+        # Copy the new git code to the server
+        $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
+        $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
+        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+
+    
+
+    - name: Stopping IIS service and delete old build files
+      shell: powershell
+      run: |
+          # Delete build files from previous deployment
+          $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
+          Remove-Item -Path $folderPath\* -Recurse -Force
+    
+    - name: publish
+      shell: powershell 
+      run: |
+        cd C:\Users\madhukar.hanumantha\Desktop\workspace\
+        dotnet publish -c Release -o "C:\Users\madhukar.hanumantha\Desktop\release"
+      continue-on-error: true
