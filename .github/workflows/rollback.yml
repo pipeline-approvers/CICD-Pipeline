@@ -55,3 +55,10 @@ jobs:
         cd C:\Users\madhukar.hanumantha\Desktop\workspace\
         dotnet publish -c Release -o "C:\Users\madhukar.hanumantha\Desktop\release"
       continue-on-error: true
+
+     - name: Rollback If Publish Fails
+       if: failure()  # Trigger this step only on failure of the previous step
+       run: |
+         Write-Host "Rolling back to the latest backup..."
+         $latestBackup = Get-ChildItem -Path "C:\Users\madhukar.hanumantha\Desktop\backup" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+         Copy-Item -Path "$latestBackup\*" -Destination "C:\Users\madhukar.hanumantha\Desktop\release" -Recurse -Force
