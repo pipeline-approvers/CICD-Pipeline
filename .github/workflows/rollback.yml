@@ -65,7 +65,7 @@ jobs:
         $releasePath = "C:\Users\madhukar.hanumantha\Desktop\release" 
         $latestBackup = Get-ChildItem -Path $backupPath | Sort-Object LastWriteTime -Descending | Select-Object -First 1 
         Write-Host "Latest backup path: $($latestBackup.FullName)" 
-        if (Test-Path "$($latestBackup.FullName)\*") { 
+        if (test-Path "$($latestBackup.FullName)\*") { 
           Copy-Item -Path "$($latestBackup.FullName)\*" -Destination $releasePath -Recurse -Force 
           Write-Host "Copy operation completed successfully." 
           } else { 
