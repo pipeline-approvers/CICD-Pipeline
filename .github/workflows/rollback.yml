@@ -60,7 +60,14 @@ jobs:
     - name: Rollback If Publish Fails
       if: failure() || (steps.run_task.outcome == 'failure') || (steps.run_task.outcome == 'error')
       run: |
-         Write-Host "Rolling back to the latest backup..."
-         $backupPath = "C:\Users\madhukar.hanumantha\Desktop\backup"
-         $latestBackup = Get-ChildItem -Path "C:\Users\madhukar.hanumantha\Desktop\backup" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
-         Copy-Item -Path "$latestBackup\*" -Destination "C:\Users\madhukar.hanumantha\Desktop\release" -Recurse -Force
+        Write-Host "Rolling back to the latest backup..." 
+        $backupPath = "C:\Users\madhukar.hanumantha\Desktop\backup" 
+        $releasePath = "C:\Users\madhukar.hanumantha\Desktop\release" 
+        $latestBackup = Get-ChildItem -Path $backupPath | Sort-Object LastWriteTime -Descending | Select-Object -First 1 
+        Write-Host "Latest backup path: $($latestBackup.FullName)" 
+        if (Test-Path "$($latestBackup.FullName)\*") { 
+          Copy-Item -Path "$($latestBackup.FullName)\*" -Destination $releasePath -Recurse -Force 
+          Write-Host "Copy operation completed successfully." 
+          } else { 
+            Write-Host "Backup path does not exist: $($latestBackup.FullName)\*" 
+          }
