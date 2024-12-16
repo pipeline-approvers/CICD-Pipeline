@@ -13,4 +13,4 @@ jobs:
 
     - name: Deploy SQL Changes
       run: |
-        sqlcmd -S Nulaptop-409 -U test -P test -i ./stored-procedure/*.sql
+        sqlcmd -S Nulaptop-409 -U test -P test -i ./stored-procedure/TestSotredProcedure.sql
