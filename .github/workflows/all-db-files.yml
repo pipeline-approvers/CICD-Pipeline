@@ -1,0 +1,19 @@
+name: All-DB-Files
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: nu-laptop
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Deploy all SQL files 
+      run: | 
+        $sqlFiles = Get-ChildItem -Path ./stored-procedure -Filter *.sql 
+        foreach ($file in $sqlFiles) { 
+          sqlcmd -S Nulaptop-409 -U test -P test -i $file.FullName 
+          }
