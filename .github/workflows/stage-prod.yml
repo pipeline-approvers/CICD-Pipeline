@@ -1,7 +1,8 @@
 name: stage-prod-deployment
 on:
-  release:
-    types: [published]  # Triggers when a new release is created
+  workflow_dispatch:
+  # release:
+  #   types: [published]  # Triggers when a new release is created
   # create:
   #   tags: "*"  # Triggers when a new tag is created
 permissions:
