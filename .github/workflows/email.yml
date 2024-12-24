@@ -32,7 +32,7 @@ jobs:
         $jsonBody = @"
         {
           "personalizations": [{
-            "to": [{"email": "madhukar.hanumanthappa@nuware.com"}],
+            "to": [{"email": "yatish.ramesh@nuware.com"}],
             "subject": "$subject"
           }],
           "from": {"email": "yatish.ramesh@nuware.com"},
