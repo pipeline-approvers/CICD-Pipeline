@@ -28,7 +28,9 @@ jobs:
 
         $body = @{
           personalizations = @(@{
-            to = @(@{email = "madhukar.hanumanthappa@nuware.com"})
+            to = @(@{
+              email = "madhukar.hanumanthappa@nuware.com"
+            })
             subject = "${{ github.job }} job of ${{ github.repository }} has $STATUS"
           })
           from = @{
