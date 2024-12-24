@@ -1,0 +1,42 @@
+name: email
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: nu-laptop # this is a self hosted windows server
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Deploy
+      run: echo "Deploying application..."
+      
+    - name: Send Email Notification
+      if: always()
+      env:
+        SENDGRID_API_KEY: ${{ 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 }}
+      run: |
+        if [ "${{ job.status }}" == "success" ]; then
+          STATUS="succeeded";
+        else
+          STATUS="failed";
+        fi
+
+        curl --request POST \
+        --url https://api.sendgrid.com/v3/mail/send \
+        --header "Authorization: Bearer $SENDGRID_API_KEY" \
+        --header 'Content-Type: application/json' \
+        --data '{
+          "personalizations": [{
+            "to": [{"email": "madhukar.hanumanthappa@nuware.com"}],
+            "subject": "'"${{ github.job }} job of ${{ github.repository }} has $STATUS"'"
+          }],
+          "from": {"email": "yatish.ramesh@nuware.com"},
+          "content": [{
+            "type": "text/plain",
+            "value": "'"${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has $STATUS."'"
+          }]
+        }'
