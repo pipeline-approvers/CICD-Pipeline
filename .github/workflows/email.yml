@@ -16,11 +16,11 @@ jobs:
       
     - name: Send Email Notification
       if: always()
-      shell: powershell
+      shell: pwsh
       env:
         SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       run: |
-        if ($env:GITHUB_JOB_STATUS -eq "success") {
+        if ("${{ job.status }}" -eq "success") {
           $STATUS = "succeeded"
         } else {
           $STATUS = "failed"
@@ -32,7 +32,7 @@ jobs:
             subject = "${{ github.job }} job of ${{ github.repository }} has $STATUS"
           })
           from = @{
-            email = "yatish.ramesh@nuware.com"
+            email = "madhukar.hanumanthappa@nuware.com"
           }
           content = @(@{
             type = "text/plain"
@@ -40,7 +40,9 @@ jobs:
           })
         }
 
+        $jsonBody = $body | ConvertTo-Json -Compress
+
         Invoke-RestMethod -Method Post -Uri https://api.sendgrid.com/v3/mail/send -Headers @{
           Authorization=("Bearer $env:SENDGRID_API_KEY")
           "Content-Type"="application/json"
-        } -Body ($body | ConvertTo-Json -Compress)
+        } -Body $jsonBody
