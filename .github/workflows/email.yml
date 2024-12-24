@@ -40,4 +40,7 @@ jobs:
           })
         }
 
-        Invoke-RestMethod -Method Post -Uri https://api.sendgrid.com/v3/mail/send -Headers @{Authorization=("Bearer $env:SENDGRID_API_KEY"); "Content-Type"="application/json"} -Body ($body | ConvertTo-Json)
+        Invoke-RestMethod -Method Post -Uri https://api.sendgrid.com/v3/mail/send -Headers @{
+          Authorization=("Bearer $env:SENDGRID_API_KEY")
+          "Content-Type"="application/json"
+        } -Body ($body | ConvertTo-Json -Compress)
