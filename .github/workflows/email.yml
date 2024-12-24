@@ -17,7 +17,7 @@ jobs:
     - name: Send Email Notification
       if: always()
       env:
-        SENDGRID_API_KEY: ${{ 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 }}
+        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       run: |
         if [ "${{ job.status }}" == "success" ]; then
           STATUS="succeeded";
