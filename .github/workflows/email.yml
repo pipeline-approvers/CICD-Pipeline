@@ -18,9 +18,9 @@ jobs:
       if: always()
       shell: powershell
       env:
-        SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
+      SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
       run: |
-        if (${{ job.status }} -eq "success") {
+        if ($env:GITHUB_JOB_STATUS -eq "success") {
           $STATUS = "succeeded"
         } else {
           $STATUS = "failed"
