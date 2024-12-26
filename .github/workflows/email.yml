@@ -18,7 +18,7 @@ jobs:
       if: always()
       uses: dawidd6/action-send-mail@v2
       with:
-        server_address: smtp.office365.com
+        server_address: email-smtp.us-east-1.amazonaws.com
         server_port: 587
         username: ${{ secrets.EMAIL_USERNAME }}
         password: ${{ secrets.EMAIL_PASSWORD }}
