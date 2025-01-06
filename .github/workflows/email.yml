@@ -25,7 +25,7 @@ jobs:
         body: This is a test email sent from a GitHub Action.
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+        aws-region: 'us-east-1'
       
     # - name: Send Email Notification
     #   if: always()
