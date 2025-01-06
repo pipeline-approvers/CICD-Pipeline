@@ -11,23 +11,32 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Deploy
+    - name: Deploy1
       run: echo "Deploying application..."
 
     - name: Run Deployment Script
       id: deploy
       run: |
         echo "Deploying..."
-        # Simulate setting outputs
-        echo "branch=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
-        echo "tag=${GITHUB_SHA}" >> $GITHUB_ENV
-        echo "status=success" >> $GITHUB_ENV
+        # Simulate a deployment script
+        # Replace the following line with your actual deployment command
+        DEPLOYMENT_STATUS="success"  # Example: change to "failure" if the command fails
+        
+        if [ "$DEPLOYMENT_STATUS" = "success" ]; then
+          echo "Deployment successful"
+        else
+          echo "Deployment failed"
+        fi
+
+        echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        echo "::set-output name=tag::${GITHUB_SHA}"
+        echo "::set-output name=status::$DEPLOYMENT_STATUS"
 
     - name: Print Deployment Details
       run: |
-        echo "Branch: ${{ env.branch }}"
-        echo "Tag: ${{ env.tag }}"
-        echo "Status: ${{ env.status }}"
+        echo "Branch: ${{ steps.deploy.outputs.branch }}"
+        echo "Tag: ${{ steps.deploy.outputs.tag }}"
+        echo "Status: ${{ steps.deploy.outputs.status }}"
 
     - name: Send Deployment Email
       uses: dsfx3d/action-aws-ses@v1
@@ -37,9 +46,9 @@ jobs:
         subject: Deployment Notification
         body: |
           Deployment Details:
-          - Branch: ${{ env.branch }}
-          - Tag: ${{ env.tag }}
-          - Status: ${{ env.status }}
+          - Branch: ${{ steps.deploy.outputs.branch }}
+          - Tag: ${{ steps.deploy.outputs.tag }}
+          - Status: ${{ steps.deploy.outputs.status }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
