@@ -24,7 +24,7 @@ jobs:
         echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $Env:GITHUB_ENV
         echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $Env:GITHUB_ENV
         echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $Env:GITHUB_ENV
-      shell: pwsh
+      shell: powershell
 
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
