@@ -1,0 +1,89 @@
+name: email-send
+on:
+  workflow_dispatch:
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploy:
+    runs-on: nu-laptop # this is a self hosted windows server
+    
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: us-east-1
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v
+
+    - name: Set Variables for EST Time
+      id: step1
+      run: |
+        echo "Step 1: Setting variables for EST Time"
+      continue-on-error: true
+
+    - name: Creating Backup
+      id: step2
+      run: |
+        echo "Step 2: Creating Backup"
+      continue-on-error: true
+
+    - name: Copy Code to the server
+      id: step3
+      run: |
+        echo "Step 3: Copy Code to the server"
+      continue-on-error: true
+
+    - name: Stop IIS Service
+      id: step4
+      run: |
+        echo "Step 4: Stop IIS Service"
+      continue-on-error: true
+
+    - name: Publish
+      id: step5
+      run: |
+        echo "Step 5: Publish"
+      continue-on-error: true
+
+    - name: Rollback If Publish Fails
+      id: step6
+      run: |
+        echo "Step 6: Rollback If Publish Fails"
+      continue-on-error: true
+
+    - name: Start IIS Service
+      id: step7
+      run: |
+        echo "Step 7: Start IIS Service"
+      continue-on-error: true
+
+    - name: Run Cleanup Script
+      id: step8
+      run: |
+        echo "Step 8: Run Cleanup Script"
+      continue-on-error: true
+
+    - name: Check Deployment Status
+      id: check_status
+      run: |
+        if [[ "${{ steps.step1.outcome }}" == "failure" ]]; then echo "Deployment failed at step 1"; exit 1; fi
+        if [[ "${{ steps.step2.outcome }}" == "failure" ]]; then echo "Deployment failed at step 2"; exit 1; fi
+        if [[ "${{ steps.step3.outcome }}" == "failure" ]]; then echo "Deployment failed at step 3"; exit 1; fi
+        if [[ "${{ steps.step4.outcome }}" == "failure" ]]; then echo "Deployment failed at step 4"; exit 1; fi
+        if [[ "${{ steps.step5.outcome }}" == "failure" ]]; then echo "Deployment failed at step 5"; exit 1; fi
+        if [[ "${{ steps.step6.outcome }}" == "failure" ]]; then echo "Deployment failed at step 6"; exit 1; fi
+        if [[ "${{ steps.step7.outcome }}" == "failure" ]]; then echo "Deployment failed at step 7"; exit 1; fi
+        if [[ "${{ steps.step8.outcome }}" == "failure" ]]; then echo "Deployment failed at step 8"; exit 1; fi
+        echo "Deployment is successful"
+      continue-on-error: true
+
+    - name: Send Email Notification
+      uses: dsfx3d/action-aws-ses@v1
+      with:
+        to: madhukar.h1988@gmail.com
+        from: madhukar.h1988@gmail.com
+        subject: ${{ github.ref }} deployment is ${{ steps.check_status.outcome }}
+        body: |
+          ${{ steps.check_status.outputs.result }}
