@@ -14,13 +14,14 @@ jobs:
     - name: Deploy
       run: echo "Deploying application..."
 
-    - name: Assume role
+    - name: Assume role and set credentials
       id: assume-role
       run: |
         ROLE_CREDENTIALS=$(aws sts assume-role --role-arn "${{ secrets.AWS_IAM_ROLE1 }}" --role-session-name GitHubActionsSession)
-        echo "::set-output name=aws_access_key_id::$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.AccessKeyId')"
-        echo "::set-output name=aws_secret_access_key::$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SecretAccessKey')"
-        echo "::set-output name=aws_session_token::$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SessionToken')"
+        echo "AWS_ACCESS_KEY_ID=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.AccessKeyId')" >> $GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SecretAccessKey')" >> $GITHUB_ENV
+        echo "AWS_SESSION_TOKEN=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SessionToken')" >> $GITHUB_ENV
+      shell: bash
 
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
@@ -30,9 +31,6 @@ jobs:
         subject: GitHub Action Test
         body: This is a test email sent from a GitHub Action.
       env:
-        AWS_ACCESS_KEY_ID: ${{ steps.assume-role.outputs.aws_access_key_id }}
-        AWS_SECRET_ACCESS_KEY: ${{ steps.assume-role.outputs.aws_secret_access_key }}
-        AWS_SESSION_TOKEN: ${{ steps.assume-role.outputs.aws_session_token }}
         AWS_REGION: us-east-1
 
     # - name: AWS SES Action
