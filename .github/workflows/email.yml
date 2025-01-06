@@ -24,5 +24,5 @@ jobs:
         password: msru wpku ghal tmjl
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
-        to: madhukar.h1988@gmail.com
-        from: madjio.tv@gmail.com
+        to: madhukar.hanumanthappa@nuware.com
+        from: madhukar.hanumanthappa@nuware.com
