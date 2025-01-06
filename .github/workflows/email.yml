@@ -14,19 +14,45 @@ jobs:
     - name: Deploy
       run: echo "Deploying application..."
 
-   
-    - name: AWS SES Action
+    - name: Run Deployment Script
+      id: deploy
+      run: |
+        # Simulate a deployment script
+        echo "Deploying..."
+        # You can replace this with your actual deployment script
+        # For demonstration, let's assume a success status
+        echo "::set-output name=status::success"
+        echo "::set-output name=branch::${{ github.ref_name }}"
+        echo "::set-output name=tag::${{ github.sha }}"
+
+    - name: Send Deployment Email
       uses: dsfx3d/action-aws-ses@v1
       with:
         to: madhukar.h1988@gmail.com
         from: madhukar.h1988@gmail.com
-        subject: GitHub Action Test
-        body: This is a test email sent from a GitHub Action.
+        subject: Deployment Notification
+        body: |
+          Deployment Details:
+          - Branch: ${{ steps.deploy.outputs.branch }}
+          - Tag: ${{ steps.deploy.outputs.tag }}
+          - Status: ${{ steps.deploy.outputs.status }}
       env:
-        role-to-assume: ${{ secrets.AWS_IAM_ROLE1 }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1  # Ensure this is correctly set
+        AWS_REGION: us-east-1
+   
+    # - name: AWS SES Action
+    #   uses: dsfx3d/action-aws-ses@v1
+    #   with:
+    #     to: madhukar.h1988@gmail.com
+    #     from: madhukar.h1988@gmail.com
+    #     subject: GitHub Action Test
+    #     body: This is a test email sent from a GitHub Action.
+    #   env:
+    #     role-to-assume: ${{ secrets.AWS_IAM_ROLE1 }}
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     AWS_REGION: us-east-1
       
     # - name: Send Email Notification
     #   if: always()
