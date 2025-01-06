@@ -32,19 +32,28 @@ jobs:
     - name: Copy Code to the server
       id: step3
       run: |
-        echo "Step 3: Copy Code to the server"
+        # Delete git code from the previous deployment
+        $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
+          Remove-Item -Path $folderPath\* -Recurse -Force
+        # Copy the new git code to the server
+        $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
+        $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
+        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
       continue-on-error: true
 
     - name: Stop IIS Service
       id: step4
       run: |
-        echo "Step 4: Stop IIS Service"
+        # Delete build files from previous deployment
+        $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
+        Remove-Item -Path $folderPath\* -Recurse -Force
       continue-on-error: true
 
     - name: Publish
       id: step5
       run: |
-        echo "Step 5: Publish"
+        cd C:\Users\madhukar.hanumantha\Desktop\workspace\
+        dotnet publish -c Release -o "C:\Users\madhukar.hanumantha\Desktop\release"
       continue-on-error: true
 
     - name: Rollback If Publish Fails
@@ -84,6 +93,6 @@ jobs:
       with:
         to: madhukar.h1988@gmail.com
         from: madhukar.h1988@gmail.com
-        subject: ${{ github.ref_name }} deployment is ${{ steps.check_status.outcome }}
+        subject: ${{ github.ref }} deployment is ${{ steps.check_status.outcome }}
         body: |
           ${{ steps.check_status.outputs.result }}
