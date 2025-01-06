@@ -17,11 +17,14 @@ jobs:
     - name: Assume role and set credentials
       id: assume-role
       run: |
-        ROLE_CREDENTIALS=$(aws sts assume-role --role-arn "${{ secrets.AWS_IAM_ROLE1 }}" --role-session-name GitHubActionsSession)
-        echo "AWS_ACCESS_KEY_ID=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.AccessKeyId')" >> $GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SecretAccessKey')" >> $GITHUB_ENV
-        echo "AWS_SESSION_TOKEN=$(echo $ROLE_CREDENTIALS | jq -r '.Credentials.SessionToken')" >> $GITHUB_ENV
-      shell: bash
+        $RoleCredentials = aws sts assume-role --role-arn "${{ secrets.AWS_IAM_ROLE1 }}" --role-session-name GitHubActionsSession
+        $AWS_ACCESS_KEY_ID = $RoleCredentials.Credentials.AccessKeyId
+        $AWS_SECRET_ACCESS_KEY = $RoleCredentials.Credentials.SecretAccessKey
+        $AWS_SESSION_TOKEN = $RoleCredentials.Credentials.SessionToken
+        echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $Env:GITHUB_ENV
+        echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $Env:GITHUB_ENV
+        echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $Env:GITHUB_ENV
+      shell: pwsh
 
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
@@ -32,7 +35,6 @@ jobs:
         body: This is a test email sent from a GitHub Action.
       env:
         AWS_REGION: us-east-1
-
     # - name: AWS SES Action
     #   uses: dsfx3d/action-aws-ses@v1
     #   with:
