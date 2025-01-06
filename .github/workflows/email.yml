@@ -20,8 +20,8 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 587
-        username: madhukar.h1988@gmail.com
-        password: Nuware@230994
+        username: madjio.tv@gmail.com
+        password: A@bcd1234
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
         to: madhukar.hanumanthappa@nuware.com
