@@ -19,13 +19,14 @@ jobs:
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
       with:
-        to: madhukar.hanumanthappa@nuware.com
-        from: madhukar.hanumanthappa@nuware.com
+        to: madhukar.h1988@gmail.com
+        from: madhukar.h1988@gmail.com
         subject: GitHub Action Test
         body: This is a test email sent from a GitHub Action.
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        role-to-assume: ${{ secrets.AWS_IAM_ROLE1 }}
+        # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: us-east-1  # Ensure this is correctly set
       
     # - name: Send Email Notification
