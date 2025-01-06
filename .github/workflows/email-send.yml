@@ -84,6 +84,6 @@ jobs:
       with:
         to: madhukar.h1988@gmail.com
         from: madhukar.h1988@gmail.com
-        subject: ${{ github.ref }} deployment is ${{ steps.check_status.outcome }}
+        subject: ${{ github.ref_name }} deployment is ${{ steps.check_status.outcome }}
         body: |
           ${{ steps.check_status.outputs.result }}
