@@ -15,7 +15,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v
 
     - name: Set Variables for EST Time
       id: step1
@@ -68,15 +68,15 @@ jobs:
     - name: Check Deployment Status
       id: check_status
       run: |
-        if [[ "${{ steps.step1.outcome }}" == "failure" ]]; then echo "Deployment failed at step 1"; exit 1; fi
-        if [[ "${{ steps.step2.outcome }}" == "failure" ]]; then echo "Deployment failed at step 2"; exit 1; fi
-        if [[ "${{ steps.step3.outcome }}" == "failure" ]]; then echo "Deployment failed at step 3"; exit 1; fi
-        if [[ "${{ steps.step4.outcome }}" == "failure" ]]; then echo "Deployment failed at step 4"; exit 1; fi
-        if [[ "${{ steps.step5.outcome }}" == "failure" ]]; then echo "Deployment failed at step 5"; exit 1; fi
-        if [[ "${{ steps.step6.outcome }}" == "failure" ]]; then echo "Deployment failed at step 6"; exit 1; fi
-        if [[ "${{ steps.step7.outcome }}" == "failure" ]]; then echo "Deployment failed at step 7"; exit 1; fi
-        if [[ "${{ steps.step8.outcome }}" == "failure" ]]; then echo "Deployment failed at step 8"; exit 1; fi
-        echo "Deployment is successful"
+        if ($env:STEP1_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 1"; exit 1 }
+        if ($env:STEP2_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 2"; exit 1 }
+        if ($env:STEP3_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 3"; exit 1 }
+        if ($env:STEP4_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 4"; exit 1 }
+        if ($env:STEP5_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 5"; exit 1 }
+        if ($env:STEP6_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 6"; exit 1 }
+        if ($env:STEP7_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 7"; exit 1 }
+        if ($env:STEP8_OUTCOME -eq 'failure') { Write-Output "Deployment failed at step 8"; exit 1 }
+        Write-Output "Deployment is successful"
       continue-on-error: true
 
     - name: Send Email Notification
