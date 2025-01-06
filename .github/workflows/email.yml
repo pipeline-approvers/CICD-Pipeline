@@ -18,8 +18,8 @@ jobs:
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
       with:
-        to: madhukar.hanumanthappa@uhsinc.com
-        from: madhukar.hanumanthappa@uhsinc.com
+        to: madhukar.h1988@gmail.com
+        from: madhukar.h1988@gmail.com
         subject: GitHub Action Test
         body: This is a test email sent from a GitHub Action.
       env:
