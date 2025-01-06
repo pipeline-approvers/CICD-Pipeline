@@ -21,9 +21,9 @@ jobs:
         $AWS_ACCESS_KEY_ID = $RoleCredentials.Credentials.AccessKeyId
         $AWS_SECRET_ACCESS_KEY = $RoleCredentials.Credentials.SecretAccessKey
         $AWS_SESSION_TOKEN = $RoleCredentials.Credentials.SessionToken
-        echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $Env:GITHUB_ENV
-        echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $Env:GITHUB_ENV
-        echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $Env:GITHUB_ENV
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set aws_session_token $AWS_SESSION_TOKEN
       shell: powershell
 
     - name: AWS SES Action
