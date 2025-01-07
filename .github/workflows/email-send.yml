@@ -32,7 +32,7 @@ jobs:
       run: |
         # Delete git code from the previous deployment
         $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
-          Remove-Item -Path $folderPath\* -Recurse -Force
+        Remove-Item -Path $folderPath\* -Recurse -Force
         # Copy the new git code to the server
         $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
         $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
@@ -54,7 +54,7 @@ jobs:
 
     - name: Rollback If Publish Fails
       id: step6
-      if: failure()
+      if: ${{ failure() }}
       run: |
         echo "Step 6: Rollback If Publish Fails"
 
@@ -105,6 +105,6 @@ jobs:
         from: madhukar.h1988@gmail.com
         subject: ${{ github.ref_name }} deployment is ${{ steps.check_status.outcome }}
         body: |
-          Deployment status: ${{ steps.check_status.outputs.result }}
+          Deployment status: ${{ steps.check_status.outputs.status }}
           Outcome: ${{ steps.check_status.outcome }}
-          Failed Step: ${{ steps.check_status.outputs.failed_step }}
+          Failed Step: ${{ steps.check_status.outputs.failedStep }}
