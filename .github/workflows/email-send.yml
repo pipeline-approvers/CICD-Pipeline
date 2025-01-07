@@ -83,7 +83,7 @@ jobs:
         if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8"; exit 1 }
         echo "Deployment $status"
         echo "Failed Step: $failedStep"
-      shell: pwsh
+      shell: powershell
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
