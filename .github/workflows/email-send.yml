@@ -96,6 +96,7 @@ jobs:
         STEP7_OUTCOME: ${{ steps.step7.outcome }}
         STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
+
     - name: Send Email Notification
       if: always()
       uses: dsfx3d/action-aws-ses@v1
@@ -105,5 +106,4 @@ jobs:
         subject: ${{ github.ref_name }} deployment is ${{ steps.check_status.outputs.status }}
         body: |
           Deployment status: ${{ steps.check_status.outputs.status }}
-          Outcome: ${{ steps.check_status.outcome }}
           Failed Step: ${{ steps.check_status.outputs.failedStep }}
