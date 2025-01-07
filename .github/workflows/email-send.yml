@@ -30,8 +30,10 @@ jobs:
     - name: Copy Code to the server
       id: step3
       run: |
+        # Delete git code from the previous deployment
         $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
         Remove-Item -Path $folderPath\* -Recurse -Force
+        # Copy the new git code to the server
         $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
         $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
         Copy-Item -Path $source\* -Destination $destination -Recurse -Force
@@ -39,6 +41,7 @@ jobs:
     - name: Stop IIS Service
       id: step4
       run: |
+        # Delete build files from previous deployment
         $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
         Remove-Item -Path $folderPath\* -Recurse -Force
 
@@ -51,7 +54,7 @@ jobs:
 
     - name: Rollback If Publish Fails
       id: step6
-      if: steps.step5.outcome == 'failure'
+      if: ${{ steps.step5.outcome == 'failure' }}
       run: |
         echo "Step 6: Rollback If Publish Fails"
 
@@ -67,17 +70,18 @@ jobs:
 
     - name: Check Deployment Status
       id: check_status
+      continue-on-error: true
       run: |
         $status = "success"
         $failedStep = ""
-        if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1"; exit 1 }
-        if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2"; exit 1 }
-        if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3"; exit 1 }
-        if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4"; exit 1 }
-        if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5"; exit 1 }
-        if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6"; exit 1 }
-        if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7"; exit 1 }
-        if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8"; exit 1 }
+        if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1" }
+        if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2" }
+        if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3" }
+        if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4" }
+        if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5" }
+        if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6" }
+        if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7" }
+        if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8" }
         echo "Deployment $status"
         echo "Failed Step: $failedStep"
         echo "::set-output name=status::$status"
@@ -95,7 +99,6 @@ jobs:
         STEP6_OUTCOME: ${{ steps.step6.outcome }}
         STEP7_OUTCOME: ${{ steps.step7.outcome }}
         STEP8_OUTCOME: ${{ steps.step8.outcome }}
-
 
     - name: Send Email Notification
       if: always()
