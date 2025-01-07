@@ -72,16 +72,20 @@ jobs:
       id: check_status
       run: |
         $status = "success"
-        if (${{ steps.step1.outcome }} -eq 'failure') { $status = "failed at step 1"; exit 1 }
-        if (${{ steps.step2.outcome }} -eq 'failure') { $status = "failed at step 2"; exit 1 }
-        if (${{ steps.step3.outcome }} -eq 'failure') { $status = "failed at step 3"; exit 1 }
-        if (${{ steps.step4.outcome }} -eq 'failure') { $status = "failed at step 4"; exit 1 }
-        if (${{ steps.step5.outcome }} -eq 'failure') { $status = "failed at step 5"; exit 1 }
-        if (${{ steps.step6.outcome }} -eq 'failure') { $status = "failed at step 6"; exit 1 }
-        if (${{ steps.step7.outcome }} -eq 'failure') { $status = "failed at step 7"; exit 1 }
-        if (${{ steps.step8.outcome }} -eq 'failure') { $status = "failed at step 8"; exit 1 }
+        if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; exit 1 }
+        if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; exit 1 }
+        if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; exit 1 }
+        if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; exit 1 }
+        if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; exit 1 }
+        if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; exit 1 }
+        if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; exit 1 }
+        if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; exit 1 }
         echo "Deployment $status"
+      shell: powershell
       env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: us-east-1
         STEP1_OUTCOME: ${{ steps.step1.outcome }}
         STEP2_OUTCOME: ${{ steps.step2.outcome }}
         STEP3_OUTCOME: ${{ steps.step3.outcome }}
@@ -92,6 +96,7 @@ jobs:
         STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
     - name: Send Email Notification
+      if: always()
       uses: dsfx3d/action-aws-ses@v1
       with:
         to: madhukar.h1988@gmail.com
