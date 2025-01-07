@@ -54,7 +54,7 @@ jobs:
 
     - name: Rollback If Publish Fails
       id: step6
-      if: failure()
+      if: steps.step5.outcome == 'failure'
       run: |
         echo "Step 6: Rollback If Publish Fails"
 
