@@ -30,10 +30,8 @@ jobs:
     - name: Copy Code to the server
       id: step3
       run: |
-        # Delete git code from the previous deployment
         $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
         Remove-Item -Path $folderPath\* -Recurse -Force
-        # Copy the new git code to the server
         $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
         $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
         Copy-Item -Path $source\* -Destination $destination -Recurse -Force
@@ -41,7 +39,6 @@ jobs:
     - name: Stop IIS Service
       id: step4
       run: |
-        # Delete build files from previous deployment
         $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
         Remove-Item -Path $folderPath\* -Recurse -Force
 
@@ -54,7 +51,7 @@ jobs:
 
     - name: Rollback If Publish Fails
       id: step6
-      if: ${{ steps.step5.outcome == 'failure' }}
+      if: steps.step5.outcome == 'failure'
       run: |
         echo "Step 6: Rollback If Publish Fails"
 
