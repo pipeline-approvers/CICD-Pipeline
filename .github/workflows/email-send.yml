@@ -104,7 +104,7 @@ jobs:
       if: always()
       uses: dawidd6/action-send-mail@v2
       with:
-        server_address: smtp.gmail.com
+        server_address: email-smtp.us-east-1.amazonaws.com
         server_port: 587
         username: AKIA3KA6NJKXXQTDC6YR
         password: BGK7+bp+OS33UjMI2t8Gb29aJ7k7xLv1a4DSRLhx+P1n
