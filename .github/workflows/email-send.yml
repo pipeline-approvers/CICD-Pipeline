@@ -100,13 +100,26 @@ jobs:
         STEP7_OUTCOME: ${{ steps.step7.outcome }}
         STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
+    # - name: Send Email Notification
+    #   if: always()
+    #   uses: dsfx3d/action-aws-ses@v1
+    #   with:
+    #     to: madhukar.h1988@gmail.com
+    #     from: madhukar.hanumanthappa@nuware.com
+    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+    #     body: |
+    #       Deployment status: ${{ steps.check_status.outputs.status }}
+    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+
     - name: Send Email Notification
       if: always()
-      uses: dsfx3d/action-aws-ses@v1
+      uses: dawidd6/action-send-mail@v2
       with:
+        server_address: smtp.gmail.com
+        server_port: 587
+        username: madjio.tv@gmail.com
+        password: msru wpku ghal tmjl
+        subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
+        body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
         to: madhukar.h1988@gmail.com
-        from: madhukar.hanumanthappa@nuware.com
-        subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-        body: |
-          Deployment status: ${{ steps.check_status.outputs.status }}
-          Failed Step: ${{ steps.check_status.outputs.failedStep }}
+        from: madhukar.h1988@gmail.com
