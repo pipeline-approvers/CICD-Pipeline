@@ -106,7 +106,7 @@ jobs:
       with:
         server_address: smtp.gmail.com
         server_port: 587
-        username: git-ses-smtp-user
+        username: AKIA3KA6NJKXXQTDC6YR
         password: BGK7+bp+OS33UjMI2t8Gb29aJ7k7xLv1a4DSRLhx+P1n
         subject: ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
         body: ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
