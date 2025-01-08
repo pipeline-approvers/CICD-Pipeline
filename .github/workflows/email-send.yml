@@ -108,7 +108,7 @@ jobs:
         server_port: 587
         username: madjio.tv@gmail.com
         password: msru wpku ghal tmjl
-        to: madhukar.h1988@gmail.com, mahammadfayaz002@gmail.com, madhukar.hanumanthappa@nuware.com
+        to: madhukar.h1988@gmail.com, madhukar.hanumanthappa@uhsinc.com, madhukar.hanumanthappa@nuware.com
         from: madhukar.hanumanthappa@nuware.com
         subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
         body: |
