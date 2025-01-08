@@ -102,7 +102,7 @@ jobs:
 
     - name: Send Email Notification
       if: always()
-      uses: dawidd6/action-send-mail@v2
+      uses: dsfx3d/action-aws-ses@v1
       with:
         server_address: email-smtp.us-east-1.amazonaws.com
         server_port: 587
