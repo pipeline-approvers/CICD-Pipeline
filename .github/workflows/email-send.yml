@@ -49,7 +49,7 @@ jobs:
       id: step5
       run: |
         cd C:\Users\madhukar.hanumantha\Desktop\workspace\
-        dotnet publish -c Release -o "C:\Users\madhukar.hanumantha\Desktop\release"
+        # dotnet publish -c Release -o "C:\Users\madhukar.hanumantha\Desktop\release"
       continue-on-error: true
 
     - name: Rollback If Publish Fails
