@@ -104,8 +104,8 @@ jobs:
       if: always()
       uses: dsfx3d/action-aws-ses@v1
       with:
-        to: madhukar.hanumanthappa@nuware.com
-        from: madhukar.hanumanthappa@nuware.com
+        to: madhukar.hanumanthappa@uhsinc.com
+        from: madhukar.hanumanthappa@uhsinc.com
         subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
         body: |
           Deployment status: ${{ steps.check_status.outputs.status }}
