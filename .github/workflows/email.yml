@@ -58,7 +58,7 @@ jobs:
       uses: dsfx3d/action-aws-ses@v1
       with:
         to: madhukar.h1988@gmail.com
-        from: madhukar.h1988@gmail.com
+        from: madhukar.hanumanthappa@uhsinc.com
         subject: GitHub Action Test
         body: This is a test email sent from a GitHub Action.
       env:
