@@ -100,16 +100,29 @@ jobs:
         STEP7_OUTCOME: ${{ steps.step7.outcome }}
         STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
-    - name: Send Email Notification #nuware to gmail body works
-      if: always()
-      uses: dsfx3d/action-aws-ses@v1
+    - name: Send email using AWS SES SMTP
+      uses: dawidd6/action-send-mail@v3
       with:
-        to: madhukar.h1988@gmail.com
-        from: madhukar.hanumanthappa@uhsinc.com
-        subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-        body: |
-          Deployment status: ${{ steps.check_status.outputs.status }}
-          Failed Step: ${{ steps.check_status.outputs.failedStep }}
+        server_address: email-smtp.us-east-1.amazonaws.com
+        server_port: 587
+        username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
+        password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
+        subject: 'GitHub Action Test Email'
+        body: 'This is a test email sent from a GitHub Action using AWS SES.'
+        from: madhukar.hanumanthappa@nuware.com
+        to: madhukar.hanumanthappa@nuware.com
+
+
+    # - name: Send Email Notification #nuware to gmail body works
+    #   if: always()
+    #   uses: dsfx3d/action-aws-ses@v1
+    #   with:
+    #     to: madhukar.h1988@gmail.com
+    #     from: madhukar.hanumanthappa@uhsinc.com
+    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+    #     body: |
+    #       Deployment status: ${{ steps.check_status.outputs.status }}
+    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
 
 
     # - name: Send Email Notification #nuware to gmail body works
