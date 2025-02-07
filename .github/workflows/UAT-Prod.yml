@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Copy files
+      - name: Promote build files to UAT
         run: |
           $sourceFolder = "C:\Shared-Drive\${{ env.SOURCE_FOLDER }}"
           $destinationFolder = "C:\inetpub\wwwroot\UAT"
@@ -35,7 +35,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Copy files
+      - name: Promote build files to Prod
         run: |
           $sourceFolder = "C:\Shared-Drive\${{ env.SOURCE_FOLDER }}"
           $destinationFolder = "C:\inetpub\wwwroot\Prod"
