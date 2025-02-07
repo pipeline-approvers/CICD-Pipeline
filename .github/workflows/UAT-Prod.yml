@@ -29,6 +29,7 @@ jobs:
 
   Deploy-Prod:
     runs-on: nu-laptop
+    needs: Deploy-UAT
     environment: prod
 
     steps:
