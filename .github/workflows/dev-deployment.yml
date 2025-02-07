@@ -1,4 +1,4 @@
-name: Dev Deployment
+name: Dev-Deployment
 
 on:
   push:
@@ -12,11 +12,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Create text file with tag name
+      - name: Build
         run: |
           echo "This file was created for tag ${{ github.ref_name }}" > C:\inetpub\wwwroot\Dev\${{ github.ref_name }}.txt
 
-      - name: Create folder in Shared-Drive and copy text file
+      - name: Copy Build Folder to shared drive
         run: |
           mkdir C:\Shared-Drive\${{ github.ref_name }}
           copy C:\inetpub\wwwroot\Dev\${{ github.ref_name }}.txt C:\Shared-Drive\${{ github.ref_name }}\${{ github.ref_name }}.txt
