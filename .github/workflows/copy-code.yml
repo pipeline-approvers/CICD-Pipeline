@@ -1,4 +1,4 @@
-name: Copy-Code
+name: UAT-Prod
 
 on: 
   workflow_dispatch:
@@ -11,6 +11,7 @@ on:
 jobs:
   copy-files:
     runs-on: nu-laptop
+    environment: UAT
 
     steps:
       - name: Checkout repository
@@ -18,8 +19,8 @@ jobs:
 
       - name: Copy files
         run: |
-          $sourceFolder = "C:\Build\${{ env.SOURCE_FOLDER }}"
-          $destinationFolder = "C:\inetpub\wwwroot\Build"
+          $sourceFolder = "C:\Shared-Drive\${{ env.SOURCE_FOLDER }}"
+          $destinationFolder = "C:\inetpub\wwwroot\UAT"
           New-Item -ItemType Directory -Force -Path $destinationFolder
           Copy-Item -Path "$sourceFolder\\*" -Destination $destinationFolder -Recurse
         shell: powershell
