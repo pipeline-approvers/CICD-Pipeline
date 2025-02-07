@@ -1,0 +1,26 @@
+name: Copy Files with User Input (Windows)
+
+on: 
+  workflow_dispatch:
+    inputs:
+      source-folder:
+        description: 'Name of the source folder on C drive'
+        required: true
+        default: 'source_folder'
+
+jobs:
+  copy-files:
+    runs-on: nu-laptop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Copy files
+        run: |
+        shell: powershell
+          $sourceFolder = "C:\Build\${{ github.event.inputs['source-folder'] }}"
+          $destinationFolder = "C:\inetpub\wwwroot\Build"
+          New-Item -ItemType Directory -Force -Path $destinationFolder
+          Copy-Item -Path "$sourceFolder\\*" -Destination $destinationFolder -Recurse
+        
