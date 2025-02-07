@@ -26,3 +26,21 @@ jobs:
         shell: powershell
         env:
           SOURCE_FOLDER: ${{ github.event.inputs.source-folder }}
+
+  Deploy-Prod:
+    runs-on: nu-laptop
+    environment: prod
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Copy files
+        run: |
+          $sourceFolder = "C:\Shared-Drive\${{ env.SOURCE_FOLDER }}"
+          $destinationFolder = "C:\inetpub\wwwroot\Prod"
+          New-Item -ItemType Directory -Force -Path $destinationFolder
+          Copy-Item -Path "$sourceFolder\\*" -Destination $destinationFolder -Recurse
+        shell: powershell
+        env:
+          SOURCE_FOLDER: ${{ github.event.inputs.source-folder }}
