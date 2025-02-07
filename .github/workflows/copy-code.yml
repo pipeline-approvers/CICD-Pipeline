@@ -9,7 +9,7 @@ on:
         default: 'source_folder'
 
 jobs:
-  copy-files:
+  Deploy-UAT:
     runs-on: nu-laptop
     environment: UAT
 
