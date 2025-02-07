@@ -15,3 +15,8 @@ jobs:
       - name: Create text file with tag name
         run: |
           echo "This file was created for tag ${{ github.ref_name }}" > C:\inetpub\wwwroot\Dev\${{ github.ref_name }}.txt
+
+      - name: Create folder in Shared-Drive and copy text file
+        run: |
+          mkdir C:\Shared-Drive\${{ github.ref_name }}
+          copy C:\inetpub\wwwroot\Dev\${{ github.ref_name }}.txt C:\Shared-Drive\${{ github.ref_name }}\${{ github.ref_name }}.txt
