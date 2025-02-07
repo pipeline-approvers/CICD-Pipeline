@@ -1,4 +1,4 @@
-name: Copy Files with User Input (Windows)
+name: Copy-Code
 
 on: 
   workflow_dispatch:
@@ -18,9 +18,10 @@ jobs:
 
       - name: Copy files
         run: |
-        shell: powershell
-          $sourceFolder = "C:\Build\${{ github.event.inputs['source-folder'] }}"
+          $sourceFolder = "C:\Build\${{ env.SOURCE_FOLDER }}"
           $destinationFolder = "C:\inetpub\wwwroot\Build"
           New-Item -ItemType Directory -Force -Path $destinationFolder
           Copy-Item -Path "$sourceFolder\\*" -Destination $destinationFolder -Recurse
-        
+        shell: powershell
+        env:
+          SOURCE_FOLDER: ${{ github.event.inputs.source-folder }}
