@@ -16,18 +16,7 @@ jobs:
         run: |
           echo "Deploy uat"
 
-  Deploy-Prod:
-    runs-on: nu-laptop
-    needs: Deploy-UAT
-    environment: prod
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Promote build files to Prod
-        run: |
-          echo "deploy to prod"
+  
           
   Approval-Check:
     runs-on: nu-laptop
