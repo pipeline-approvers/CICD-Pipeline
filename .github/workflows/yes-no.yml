@@ -21,4 +21,4 @@ jobs:
           if [ "$response" != "yes" ]; then
             echo "Deployment not approved"
             exit 1
-        shell: C:\WINDOWS\system32\bash.EXE --noprofile --norc -e -o pipefail {0}
+        shell: bash
