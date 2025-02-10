@@ -27,78 +27,78 @@ jobs:
       run: |
         echo "Step 2: Creating Backup"
 
-    - name: Copy Code to the server
-      id: step3
-      run: |
-        # Delete git code from the previous deployment
-        $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
-        Remove-Item -Path $folderPath\* -Recurse -Force
-        # Copy the new git code to the server
-        $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
-        $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
-        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+    # - name: Copy Code to the server
+    #   id: step3
+    #   run: |
+    #     # Delete git code from the previous deployment
+    #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
+    #     Remove-Item -Path $folderPath\* -Recurse -Force
+    #     # Copy the new git code to the server
+    #     $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
+    #     $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
+    #     Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
-    - name: Stop IIS Service
-      id: step4
-      run: |
-        # Delete build files from previous deployment
-        $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
-        Remove-Item -Path $folderPath\* -Recurse -Force
+    # - name: Stop IIS Service
+    #   id: step4
+    #   run: |
+    #     # Delete build files from previous deployment
+    #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
+    #     Remove-Item -Path $folderPath\* -Recurse -Force
 
-    - name: Publish
-      id: step5
-      run: |
-        cd C:\Users\madhukar.hanumantha\Desktop\workspace\
-      continue-on-error: true
+    # - name: Publish
+    #   id: step5
+    #   run: |
+    #     cd C:\Users\madhukar.hanumantha\Desktop\workspace\
+    #   continue-on-error: true
 
-    - name: Rollback If Publish Fails
-      id: step6
-      if: ${{ steps.step5.outcome == 'failure' }}
-      run: |
-        echo "Step 6: Rollback If Publish Fails"
+    # - name: Rollback If Publish Fails
+    #   id: step6
+    #   if: ${{ steps.step5.outcome == 'failure' }}
+    #   run: |
+    #     echo "Step 6: Rollback If Publish Fails"
 
-    - name: Start IIS Service
-      if: always()
-      id: step7
-      run: |
-        echo "Step 7: Start IIS Service"
+    # - name: Start IIS Service
+    #   if: always()
+    #   id: step7
+    #   run: |
+    #     echo "Step 7: Start IIS Service"
 
-    - name: Run Cleanup Script
-      id: step8
-      run: |
-        echo "Step 8: Run Cleanup Script"
+    # - name: Run Cleanup Script
+    #   id: step8
+    #   run: |
+    #     echo "Step 8: Run Cleanup Script"
 
-    - name: Check Deployment Status
-      id: check_status
-      continue-on-error: true
-      run: |
-        $status = "success"
-        $failedStep = ""
-        if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1" }
-        if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2" }
-        if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3" }
-        if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4" }
-        if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5" }
-        if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6" }
-        if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7" }
-        if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8" }
-        echo "Deployment $status"
-        echo "Failed Step: $failedStep"
-        echo "::set-output name=status::$status"
-        echo "::set-output name=failedStep::$failedStep"
-      shell: powershell
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1
-        STEP1_OUTCOME: ${{ steps.step1.outcome }}
-        STEP2_OUTCOME: ${{ steps.step2.outcome }}
-        STEP3_OUTCOME: ${{ steps.step3.outcome }}
-        STEP4_OUTCOME: ${{ steps.step4.outcome }}
-        STEP5_OUTCOME: ${{ steps.step5.outcome }}
-        STEP6_OUTCOME: ${{ steps.step6.outcome }}
-        STEP7_OUTCOME: ${{ steps.step7.outcome }}
-        STEP8_OUTCOME: ${{ steps.step8.outcome }}
+    # - name: Check Deployment Status
+    #   id: check_status
+    #   continue-on-error: true
+    #   run: |
+    #     $status = "success"
+    #     $failedStep = ""
+    #     if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1" }
+    #     if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2" }
+    #     if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3" }
+    #     if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4" }
+    #     if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5" }
+    #     if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6" }
+    #     if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7" }
+    #     if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8" }
+    #     echo "Deployment $status"
+    #     echo "Failed Step: $failedStep"
+    #     echo "::set-output name=status::$status"
+    #     echo "::set-output name=failedStep::$failedStep"
+    #   shell: powershell
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #     AWS_REGION: us-east-1
+    #     STEP1_OUTCOME: ${{ steps.step1.outcome }}
+    #     STEP2_OUTCOME: ${{ steps.step2.outcome }}
+    #     STEP3_OUTCOME: ${{ steps.step3.outcome }}
+    #     STEP4_OUTCOME: ${{ steps.step4.outcome }}
+    #     STEP5_OUTCOME: ${{ steps.step5.outcome }}
+    #     STEP6_OUTCOME: ${{ steps.step6.outcome }}
+    #     STEP7_OUTCOME: ${{ steps.step7.outcome }}
+    #     STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
     - name: Send email using AWS SES SMTP
       uses: dawidd6/action-send-mail@v3
