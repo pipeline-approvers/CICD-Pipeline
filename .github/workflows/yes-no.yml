@@ -1,25 +1,58 @@
 name: yes-no
+
 on: 
   workflow_dispatch:
-
+    
 jobs:
-  deploy:
+  Deploy-UAT:
     runs-on: nu-laptop
+    environment: UAT
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      # Add your deployment steps here
-      - name: Deploy application
-        run: echo "Deploying application..."
+      - name: Promote build files to UAT
+        run: |
+          echo "Deploy uat"
 
+  Deploy-Prod:
+    runs-on: nu-laptop
+    needs: Deploy-UAT
+    environment: prod
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Promote build files to Prod
+        run: |
+          echo "deploy to prod"
+          
+  Approval-Check:
+    runs-on: nu-laptop
+    needs: Deploy-Prod
+    environment: prod
+
+    steps:
       - name: Manual approval
         run: |
-          Write-Host "Awaiting approval (yes/no):"
-          $response = Read-Host
-          if ($response -ne "yes") {
-            Write-Host "Deployment not approved"
+          if [ "${{ github.event.inputs.approval }}" != "yes" ]; then
+            echo "Deployment not approved. Triggering rollback."
+            gh workflow run UAT-Prod --ref main --inputs approval=rollback
             exit 1
-          }
-        shell: powershell
+          else
+            echo "Deployment approved."
+
+  Rollback-UAT:
+    runs-on: nu-laptop
+    needs: Approval-Check
+    if: ${{ needs.Approval-Check.outputs.approval == 'rollback' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Rollback UAT deployment
+        run: |
+          echo "rollback uat"
