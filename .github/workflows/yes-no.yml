@@ -16,4 +16,10 @@ jobs:
 
       - name: Manual approval
         run: |
-          /usr/bin/bash -c 'echo "Awaiting approval (yes/no):"; read response; if [ "$response" != "yes" ]; then echo "Deployment not approved"; exit 1;'
+          Write-Host "Awaiting approval (yes/no):"
+          $response = Read-Host
+          if ($response -ne "yes") {
+            Write-Host "Deployment not approved"
+            exit 1
+          }
+        shell: powershell
