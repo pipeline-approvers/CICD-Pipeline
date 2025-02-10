@@ -20,8 +20,8 @@ jobs:
           
   Approval-Check:
     runs-on: nu-laptop
-    needs: Deploy-Prod
-    environment: prod
+    
+    environment: UAT
 
     steps:
       - name: Manual approval
