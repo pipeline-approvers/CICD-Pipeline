@@ -44,15 +44,15 @@ jobs:
         to: madhukar.hanumanthappa@nuware.com
         from: madhukar.hanumanthappa@nuware.com
         subject: Deployment Notification
-        body: |
-          Deployment Details:
-          - Branch: ${{ steps.deploy.outputs.branch }}
-          # - Tag: ${{ steps.deploy.outputs.tag }}
-          # - Status: ${{ steps.deploy.outputs.status }}
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: us-east-1
+        body: Test email
+          # Deployment Details:
+          # - Branch: ${{ steps.deploy.outputs.branch }}
+          # # - Tag: ${{ steps.deploy.outputs.tag }}
+          # # - Status: ${{ steps.deploy.outputs.status }}
+      # env:
+      #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      #   AWS_REGION: us-east-1
    
     - name: AWS SES Action
       uses: dsfx3d/action-aws-ses@v1
