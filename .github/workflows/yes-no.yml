@@ -16,9 +16,4 @@ jobs:
 
       - name: Manual approval
         run: |
-          echo "Awaiting approval (yes/no):"
-          read response
-          if [ "$response" != "yes" ]; then
-            echo "Deployment not approved"
-            exit 1
-        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+          /usr/bin/bash -c 'echo "Awaiting approval (yes/no):"; read response; if [ "$response" != "yes" ]; then echo "Deployment not approved"; exit 1;'
