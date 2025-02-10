@@ -21,4 +21,4 @@ jobs:
           if [ "$response" != "yes" ]; then
             echo "Deployment not approved"
             exit 1
-        shell: bash
+        shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
