@@ -20,7 +20,7 @@ jobs:
           
   Approval-Check:
     runs-on: nu-laptop
-    
+    needs: Deploy-UAT
     environment: UAT
 
     steps:
