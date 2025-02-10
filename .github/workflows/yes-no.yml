@@ -1,0 +1,25 @@
+name: yes-no
+on: 
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: nu-laptop
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Add your deployment steps here
+      - name: Deploy application
+        run: echo "Deploying application..."
+
+      - name: Manual approval
+        run: |
+          echo "Awaiting approval (yes/no):"
+          read response
+          if [ "$response" != "yes" ]; then
+            echo "Deployment not approved"
+            exit 1
+          fi
+        shell: bash
