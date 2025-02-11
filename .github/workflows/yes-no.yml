@@ -2,51 +2,21 @@ name: yes-no
 
 on: 
   workflow_dispatch:
-    inputs:
-      approval:
-        description: 'Type yes to approve deployment'
-        required: true
-        default: 'no'
-
+    
 jobs:
   Deploy-UAT:
     runs-on: nu-laptop
-    environment: UAT
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Promote build files to UAT
-        run: echo "Deploy uat"
-
-  Approval-Check:
-    runs-on: nu-laptop
-    needs: Deploy-UAT
-    environment: UAT
-
-    steps:
-      - name: Manual approval
+      - name: Sanity pass check (manual input)
+        id: sanity
         run: |
-          Write-Host "Awaiting approval (yes/no):"
-          $approval = "${{ github.event.inputs.approval }}"
-          if ($approval -ne "yes") {
-            Write-Host "Deployment not approved. Triggering rollback."
-            gh workflow run yes-no --ref main --inputs approval=rollback
-            exit 1
-          } else {
-            Write-Host "Deployment approved."
-        shell: powershell
-
-  Rollback-UAT:
-    runs-on: nu-laptop
-    needs: Approval-Check
-    if: ${{ needs.Approval-Check.result == 'failure' }}
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Rollback UAT deployment
-        run: echo "rollback uat"
-        shell: powershell
+          echo "Please approve the sanity check by typing 'yes' or 'no'"
+          read SANITY_PASS
+          echo "SANITY_PASS=$SANITY_PASS" >> $GITHUB_ENV
+ 
+      - name: Fail if sanity check fails
+        if: env.SANITY_PASS != 'yes'
+        run: |
+          echo "Sanity check failed, exiting."
+          exit 1
+        continue-on-error: false
