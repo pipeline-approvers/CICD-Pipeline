@@ -2,6 +2,15 @@ name: yes-no
 
 on: 
   workflow_dispatch:
+    inputs:
+      rollback:
+        description: 'Should we roll back the deployment? (true/false)'
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
     
 jobs:
   Deploy-UAT:
