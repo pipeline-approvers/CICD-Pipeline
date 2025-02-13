@@ -14,7 +14,7 @@ jobs:
          echo "Deploying..."
 
      - name: Wait for approval
-       uses: peter-evans/environment-approval-action@v1
+       
        with:
          environment: UAT  
          
