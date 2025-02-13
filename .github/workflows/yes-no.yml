@@ -14,7 +14,7 @@ jobs:
          echo "Deploying..."
 
      - name: Wait for approval       
-       with:
+       run: |
          environment: UAT  
          
      - name: Rollback if denied
