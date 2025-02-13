@@ -13,8 +13,7 @@ jobs:
        run: |
          echo "Deploying..."
 
-     - name: Wait for approval
-       
+     - name: Wait for approval       
        with:
          environment: UAT  
          
