@@ -2,30 +2,26 @@ name: yes-no
 
 on: 
   workflow_dispatch:
-    inputs:
-      rollback:
-        description: 'Should we roll back the deployment? (true/false)'
-        required: true
-        default: 'false'
-        type: choice
-        options:
-          - 'true'
-          - 'false'
-    
+        
 jobs:
-  Deploy-UAT:
+  Deploy:
     runs-on: nu-laptop
     steps:
-      - name: Sanity pass check (manual input)
-        id: sanity
-        run: |
-          echo "Please approve the sanity check by typing 'yes' or 'no'"
-          read SANITY_PASS
-          echo "SANITY_PASS=$SANITY_PASS" >> $GITHUB_ENV
- 
-      - name: Fail if sanity check fails
-        if: env.SANITY_PASS != 'yes'
-        run: |
-          echo "Sanity check failed, exiting."
-          exit 1
-        continue-on-error: false
+     - name: Checkout repository
+       uses: actions/checkout@v3
+     - name: Deploy Application
+       run: |
+         echo "Deploying..."
+
+     - name: Wait for approval
+       uses: peter-evans/environment-approval-action@v2
+       with:
+         environment: UAT  
+         
+     - name: Rollback if denied
+       if: ${{ failure() }}
+       run: |
+         echo "Deployment was denied. Performing rollback..."
+
+      
+       
