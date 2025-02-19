@@ -22,6 +22,8 @@ jobs:
     runs-on: nu-laptop
     needs: deploy-dev
     environment: UAT
+    outputs:
+      rejection-status: ${{ steps.check_approval.outputs.rejection-status }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -49,20 +51,20 @@ jobs:
         id: check_approval
         run: |
           APPROVAL=$(gh issue view ${{ github.event.issue.number }} --json comments --jq '.comments[-1].body')
-          echo "approval=$APPROVAL" >> $GITHUB_ENV
+          if [ "$APPROVAL" == "no" ]; then
+            echo "::set-output name=rejection-status::true"
+          else
+            echo "::set-output name=rejection-status::false"
+          fi
 
       - name: Deploy to UAT
-        if: ${{ env.approval == 'yes' }}
+        if: steps.check_approval.outputs.rejection-status == 'false'
         run: echo "Deploying to UAT environment..."
-
-      - name: Mark as rejected
-        if: ${{ env.approval == 'no' }}
-        run: echo "rejected" >> $GITHUB_ENV
 
   roll-back:
     runs-on: nu-laptop
     needs: approve-build
-    if: ${{ env.rejected == 'true' }}
+    if: ${{ needs.approve-build.outputs.rejection-status == 'true' }}
     steps:
       - name: Rollback dev deployment
         run: echo "Rolling back dev deployment..."
