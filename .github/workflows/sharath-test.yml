@@ -16,11 +16,53 @@ jobs:
     steps:
       - name: Deploy to dev
         run: echo "Deploying to dev environment"
+        continue-on-error: true
 
-  approve-build:    
+  approve-build:  
     runs-on: nu-laptop
+    needs: deploy-dev
     environment: UAT
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: Approval prompt
+        id: approval
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const { Octokit } = require("@octokit/rest");
+            const { context } = require("@actions/github");
+            const token = process.env.GITHUB_TOKEN;
+            const octokit = new Octokit({ auth: token });
+
+            const result = await octokit.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: 'Do you approve the UAT deployment? Reply with "yes" or "no".'
+            });
+
+            return result.data.id;
+
+      - name: Check approval status
+        id: check_approval
+        run: |
+          APPROVAL=$(gh issue view ${{ github.event.issue.number }} --json comments --jq '.comments[-1].body')
+          echo "approval=$APPROVAL" >> $GITHUB_ENV
+
+      - name: Deploy to UAT
+        if: ${{ env.approval == 'yes' }}
+        run: echo "Deploying to UAT environment..."
+
+      - name: Mark as rejected
+        if: ${{ env.approval == 'no' }}
+        run: echo "rejected" >> $GITHUB_ENV
+
+  roll-back:
+    runs-on: nu-laptop
+    needs: approve-build
+    if: ${{ env.rejected == 'true' }}
+    steps:
+      - name: Rollback dev deployment
+        run: echo "Rolling back dev deployment..."
