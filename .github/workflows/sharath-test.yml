@@ -25,6 +25,9 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           event-type: build-approval
+          repository: pipeline-approvers/CICD-Pipeline
+          client-payload: '{"approved": true}'
+          token: ${{ secrets.TOKEN }}
       - name: Post-approval step
         if: ${{ github.event.action == 'build-approval' }}
         run: echo "Build approved and deployed successfully!"
