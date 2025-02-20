@@ -1,0 +1,162 @@
+name: dev-uat-prod
+on:
+  push:
+    tags:
+      - 'v*.*'
+
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  deploying-medicaid-frontend:
+    runs-on: CORP-PHPWEB01D  # this is a self hosted windows server
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Step 1
+    - name: Set Variables
+      id: vars
+      run: |
+          $ESTTimeZone = [System.TimeZoneInfo]::FindSystemTimeZoneById("Eastern Standard Time")
+          $ESTDateTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), $ESTTimeZone)
+          $Timestamp = $ESTDateTime.ToString("yyyyMMddHHmmss")
+          echo "::set-output name=timestamp::$Timestamp"
+
+    # Step 2
+    - name: Creating backup
+      shell: powershell
+      run: |
+          $sourcePath = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend"
+          $destinationPath = "C:\Backup\Medicaid-Frontend"
+          $newFolderName = "Medicaid-Frontend-$(${{ steps.vars.outputs.timestamp }})"
+          $newFolderPath = Join-Path -Path $destinationPath -ChildPath $newFolderName
+          # Copy the folder
+          Copy-Item -Path $sourcePath -Destination $newFolderPath -Recurse
+          Write-Output "Folder copied to $newFolderPath"
+
+    # Step 3
+    - name: Copy Code to the server
+      run: |
+        # Delete git code from the previous deployment
+        $folderPath = "C:\Workspace\Medicaid-Frontend"
+        Remove-Item -Path $folderPath\* -Recurse -Force
+        # Copy the git code to the server
+        $source = "${{ github.workspace }}\MedicaidEligibilityEnquiryFrontend\"
+        $destination = "C:\Workspace\Medicaid-Frontend\"
+        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+        # Copy config files
+        $source = "${{ github.workspace }}\Development\"
+        $destination = "C:\Workspace\Medicaid-Frontend\src\components\"
+        Copy-Item -Path $source\config.js -Destination $destination -Recurse -Force 
+
+    # Step 4
+    - name: Stopping IIS service and delete old build files
+      shell: powershell
+      run: |
+          # Stop IIS Service
+          stop-webapppool "MedicaidEligibilityEnquiryFrontend"
+          stop-iissite -Name "MedicaidEligibilityEnquiryFrontend" -Confirm: $false
+          start-sleep -Seconds 10
+          # Delete build files from previous deployment
+          $folderPath = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend"
+          Remove-Item -Path $folderPath\* -Recurse -Force
+
+    # Step 5
+    - name: Setup Node.js environment
+      uses: actions/setup-node@v3.5.1  # Make sure to specify the version
+      with:
+        node-version: '22'
+    
+    # Step 6
+    - name: Install dependencies and Build the project
+      id: run_task
+      shell: powershell
+      run: |
+        #Change to workspace directory
+        cd C:\Workspace\Medicaid-Frontend
+        npm install
+        npm run build
+        #Copying the build folder
+        $source = "C:\Workspace\Medicaid-Frontend\build\"
+        $destination = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend\"
+        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+      continue-on-error: true
+    
+    # Step 7
+    - name: Rollback if build fails
+      if: failure() || (steps.run_task.outcome == 'failure') || (steps.run_task.outcome == 'error')
+      run: |
+        Write-Host "Rolling back to the latest backup..." 
+        $backupPath = "C:\Backup\Medicaid-Frontend" 
+        $releasePath = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend" 
+        $latestBackup = Get-ChildItem -Path $backupPath | Sort-Object LastWriteTime -Descending | Select-Object -First 1 
+        Write-Host "Latest backup path: $($latestBackup.FullName)" 
+        if (Test-Path "$($latestBackup.FullName)\*") { 
+          Copy-Item -Path "$($latestBackup.FullName)\*" -Destination $releasePath -Recurse -Force 
+          Write-Host "Copy operation completed successfully." 
+          } else { 
+            Write-Host "Backup path does not exist: $($latestBackup.FullName)\*" 
+          }
+
+    # Step 8
+    - name: Copy code to shared drive
+      if: steps.run_task.outcome == 'success'
+      run: |
+        mkdir F:\Medicaid-Frontend\${{ github.ref_name }}
+        $source = "C:\Workspace\Medicaid-Frontend\build\"
+        $destination = "F:\Medicaid-Frontend\${{ github.ref_name }}\"
+        Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+
+
+    # Step 9
+    - name: Start IIS Service
+      if: always()  # Runs this step regardless of previous step outcome
+      run: |
+        start-sleep -Seconds 30
+        start-webapppool "MedicaidEligibilityEnquiryFrontend"
+        start-iissite "MedicaidEligibilityEnquiryFrontend"
+
+    # Step 10
+    - name: Run Cleanup Script # This will retain 10 latest backups and delete the rest from the backup folder
+      run: |
+          powershell.exe -ExecutionPolicy Bypass -File "C:\Backup\Medicaid-Frontend-Cleanup.ps1"
+
+  Deploy-UAT:
+    runs-on: CORP-PHPWEB01T
+    environment: UAT
+
+    steps:
+    - name: Stopping IIS service and delete old build files
+      shell: powershell
+      run: |
+          # Stop IIS Service
+          stop-webapppool "MedicaidEligibilityEnquiryFrontend"
+          stop-iissite -Name "MedicaidEligibilityEnquiryFrontend" -Confirm: $false
+          start-sleep -Seconds 10
+          # Delete build files from previous deployment
+          $folderPath = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend"
+          Remove-Item -Path $folderPath\* -Recurse -Force
+
+    - name: Promote build files to UAT
+      shell: powershell
+      run: |
+        $sourceFolder = "F:\Medicaid-Frontend\${{ github.ref_name }}"
+        $destinationFolder = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend"
+        Copy-Item -Path "$sourceFolder\\*" -Destination $destinationFolder -Recurse
+    
+    - name: Create backup
+      shell: powershell
+      run: |
+        $sourcePath = "C:\inetpub\wwwroot\MedicaidEligibilityEnquiryFrontend"
+        $destinationPath = "C:\Backup\Medicaid-Frontend"
+        $newFolderName = "Medicaid-Frontend-$(${{ github.ref_name }})"
+        $newFolderPath = Join-Path -Path $destinationPath -ChildPath $newFolderName
+
+    - name: Start IIS Service
+      if: always()  # Runs this step regardless of previous step outcome
+      run: |
+        start-sleep -Seconds 10
+        start-webapppool "MedicaidEligibilityEnquiryFrontend"
+        start-iissite "MedicaidEligibilityEnquiryFrontend"
