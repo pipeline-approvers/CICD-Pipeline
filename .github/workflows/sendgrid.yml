@@ -1,0 +1,21 @@
+name: Send Email Notification
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  send-email:
+    runs-on: nu-laptop
+    steps:
+      - name: Send Email
+        uses: licenseware/send-email-notification@v1
+        with:
+          api-key: ${{ secrets.SENDGRID_API_KEY }}
+          subject: "GitHub Actions Notification"
+          from-email: "madhukar.hanumanthappa@uhsinc.com"
+          to-email: "madhukar.hanumanthappa@uhsinc.com,madhukar.h1988@gmail.com,madhukar.hanumanthappa@nuware.com"
+          markdown-body: |
+            # GitHub Actions Update
+            Your workflow has completed successfully!
+            Deployment is done.
