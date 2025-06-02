@@ -10,7 +10,7 @@ jobs:
         shell: powershell
         run: |
           $apiKey = "${{ secrets.SENDGRID_API_KEY }}"
-          $toEmails = "madhukar.hanumanthappa@uhsinc.com"
+          $toEmails = @("madhukar.hanumanthappa@uhsinc.com", "madhukar.h1988@gmail.com", "madhukar.hanumanthappa@nuware.com")
           $subject = "GitHub Actions Notification"
           $body = "Your workflow has completed successfully!\nDeployment is done."
           
@@ -20,12 +20,10 @@ jobs:
           }
 
           $payload = @{
-            "personalizations" = @(@{ "to" = $toEmails.Split(",") | ForEach-Object { @{ "email" = $_ } } })
+            "personalizations" = @(@{ "to" = $toEmails | ForEach-Object { @{ "email" = $_ } } })
             "from" = @{ "email" = "madhukar.hanumanthappa@uhsinc.com" }
             "subject" = $subject
             "content" = @(@{ "type" = "text/plain"; "value" = $body })
           } | ConvertTo-Json -Depth 10
 
           Invoke-RestMethod -Uri "https://api.sendgrid.com/v3/mail/send" -Method Post -Headers $headers -Body $payload
-        
-
