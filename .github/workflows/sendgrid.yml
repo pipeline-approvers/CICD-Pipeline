@@ -10,7 +10,7 @@ jobs:
         shell: powershell
         run: |
           $apiKey = "${{ secrets.SENDGRID_API_KEY }}"
-          $toEmails = @("madhukar.hanumanthappa@uhsinc.com", "madhukar.h1988@gmail.com", "madhukar.hanumanthappa@nuware.com")
+          $toEmails = @("madhukar.h1988@gmail.com")
           $subject = "GitHub Actions Notification"
           $body = "Your workflow has completed successfully!\nDeployment is done."
           
