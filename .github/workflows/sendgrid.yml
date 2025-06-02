@@ -1,19 +1,33 @@
 name: Send Email Notification
 on:
-  workflow_dispatch
+  push:
+    branches:
+      - main
 
 jobs:
   send-email:
     runs-on: nu-laptop
     steps:
-      - name: Send Email
-        uses: licenseware/send-email-notification@v1
-        with:
-          api-key: ${{ secrets.SENDGRID_API_KEY }}
-          subject: "GitHub Actions Notification"
-          from-email: "madhukar.hanumanthappa@uhsinc.com"
-          to-email: "madhukar.hanumanthappa@uhsinc.com,madhukar.h1988@gmail.com,madhukar.hanumanthappa@nuware.com"
-          markdown-body: |
-            # GitHub Actions Update
-            Your workflow has completed successfully!
-            Deployment is done.
+      - name: Send Email via PowerShell
+        shell: powershell
+        run: |
+          $apiKey = "${{ secrets.SENDGRID_API_KEY }}"
+          $toEmails = "madhukar.hanumanthappa@uhsinc.com,madhukar.h1988@gmail.com,madhukar.hanumanthappa@nuware.com"
+          $subject = "GitHub Actions Notification"
+          $body = "Your workflow has completed successfully!\nDeployment is done."
+          
+          $headers = @{
+            "Authorization" = "Bearer $apiKey"
+            "Content-Type" = "application/json"
+          }
+
+          $payload = @{
+            "personalizations" = @(@{ "to" = $toEmails.Split(",") | ForEach-Object { @{ "email" = $_ } } })
+            "from" = @{ "email" = "madhukar.hanumanthappa@uhsinc.com" }
+            "subject" = $subject
+            "content" = @(@{ "type" = "text/plain"; "value" = $body })
+          } | ConvertTo-Json -Depth 10
+
+          Invoke-RestMethod -Uri "https://api.sendgrid.com/v3/mail/send" -Method Post -Headers $headers -Body $payload
+        
+
