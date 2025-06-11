@@ -1,16 +1,16 @@
-name: Manual SQL Deploy
+# name: Manual SQL Deploy
 
-on:
-  workflow_dispatch:
+# on:
+#   workflow_dispatch:
 
-jobs:
-  deploy:
-    runs-on: nu-laptop
+# jobs:
+#   deploy:
+#     runs-on: nu-laptop
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+#     steps:
+#     - name: Checkout code
+#       uses: actions/checkout@v3
 
-    - name: Deploy SQL Changes
-      run: |
-        sqlcmd -S Nulaptop-409 -U test -P test -i ./stored-procedure/TestSotredProcedure.sql
+#     - name: Deploy SQL Changes
+#       run: |
+#         sqlcmd -S Nulaptop-409 -U test -P test -i ./stored-procedure/TestSotredProcedure.sql
