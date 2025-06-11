@@ -1,11 +1,12 @@
-name: Azure-Board
+name: Azure-Board2
 on:
   push:
     tags:
       - 'release-v*.*'
+
 jobs:
-  create-task:
-    runs-on: nu-laptop  # Assuming this is your Windows self-hosted runner
+  create-user-story:
+    runs-on: nu-laptop  # Use Windows since you have a Windows runner
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -15,37 +16,13 @@ jobs:
         id: release
         with:
           script: |
-            const { owner, repo } = context.repo;
-            const { data: releases } = await github.rest.repos.listReleases({
-              owner,
-              repo,
-            });
+            const release = context.payload.release;
+            console.log(`Release: ${release.tag_name}, ${release.name}`);
+            core.setOutput("tag_name", release.tag_name);
+            core.setOutput("title", release.name);
+            core.setOutput("notes", release.body);
 
-            if (releases.length === 0) {
-              throw new Error("No releases found.");
-            }
-
-            const latestRelease = releases[0];
-            console.log(`Release: ${latestRelease.tag_name}, ${latestRelease.name}`);
-            
-            core.setOutput("tag_name", latestRelease.tag_name);
-            core.setOutput("title", latestRelease.name);
-            core.setOutput("body", latestRelease.body);
-
-      - name: Verify PAT Access
-        shell: powershell
-        run: |
-          $headers = @{
-              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
-          }
-
-          $response = Invoke-WebRequest -Uri "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems?api-version=6.0" `
-              -Method Get `
-              -Headers $headers
-
-          Write-Output "PAT Access Response: $($response.Content)"
-
-      - name: Create Azure Work Item
+      - name: Create Azure DevOps User Story
         shell: powershell
         run: |
           $headers = @{
@@ -56,11 +33,12 @@ jobs:
           $body = @{
               "fields" = @{
                   "System.Title" = "Release: ${{ steps.release.outputs.title }}"
-                  "System.Description" = "${{ steps.release.outputs.body }}"
+                  "System.Description" = "${{ steps.release.outputs.notes }}"
+                  "System.WorkItemType" = "User Story"
               }
           } | ConvertTo-Json -Depth 3
 
-          Invoke-WebRequest -Uri "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems/Task?api-version=6.0" `
+          Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems/User%20Story?api-version=6.0" `
               -Method Post `
               -Headers $headers `
               -Body $body
