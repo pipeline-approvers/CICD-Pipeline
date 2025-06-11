@@ -1,31 +1,31 @@
-name: Build Docker Image
+# name: Build Docker Image
  
-on:
-  push:
-    branches:
-      - test  
-  workflow_dispatch:
+# on:
+#   push:
+#     branches:
+#       - test  
+#   workflow_dispatch:
  
-jobs:
-  deploy-dev:
-    runs-on: nu-laptop
-    steps:
-      - name: Deploying Application to Dev
-        run: echo "Deploying application to Dev..."
+# jobs:
+#   deploy-dev:
+#     runs-on: nu-laptop
+#     steps:
+#       - name: Deploying Application to Dev
+#         run: echo "Deploying application to Dev..."
  
-  build-approval-dev:
-    needs: deploy-dev
-    runs-on: nu-laptop
-    steps:
-      - name: Waiting for manual approval for build to be marked as successful
-        run: |
-          echo "Build is deployed to dev. Please approve if the sanity tests are passed"
-          sleep 60
+#   build-approval-dev:
+#     needs: deploy-dev
+#     runs-on: nu-laptop
+#     steps:
+#       - name: Waiting for manual approval for build to be marked as successful
+#         run: |
+#           echo "Build is deployed to dev. Please approve if the sanity tests are passed"
+#           sleep 60
  
-  rollback-dev:
-    needs: build-approval-dev
-    if: failure()
-    runs-on: nu-laptop
-    steps:
-      - name: Rolling back build
-        run: echo "Rolling back build due to failed sanity tests in dev"  
+#   rollback-dev:
+#     needs: build-approval-dev
+#     if: failure()
+#     runs-on: nu-laptop
+#     steps:
+#       - name: Rolling back build
+#         run: echo "Rolling back build due to failed sanity tests in dev"  
