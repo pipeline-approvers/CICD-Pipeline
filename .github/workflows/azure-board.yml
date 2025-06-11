@@ -1,12 +1,11 @@
-name: Azure-Board2
+name: Azure-Board1
 on:
   push:
     tags:
       - 'release-v*.*'
-
 jobs:
-  create-user-story:
-    runs-on: nu-laptop  # Use Windows since you have a Windows runner
+  create-task:
+    runs-on: nu-laptop  # Assuming this is your Windows self-hosted runner
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -16,11 +15,35 @@ jobs:
         id: release
         with:
           script: |
-            const release = context.payload.release;
-            console.log(`Release: ${release.tag_name}, ${release.name}`);
-            core.setOutput("tag_name", release.tag_name);
-            core.setOutput("title", release.name);
-            core.setOutput("notes", release.body);
+            const { owner, repo } = context.repo;
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner,
+              repo,
+            });
+
+            if (releases.length === 0) {
+              throw new Error("No releases found.");
+            }
+
+            const latestRelease = releases[0];
+            console.log(`Release: ${latestRelease.tag_name}, ${latestRelease.name}`);
+            
+            core.setOutput("tag_name", latestRelease.tag_name);
+            core.setOutput("title", latestRelease.name);
+            core.setOutput("body", latestRelease.body);
+
+      - name: Verify PAT Access
+        shell: powershell
+        run: |
+          $headers = @{
+              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
+          }
+
+          $response = Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems?api-version=6.0" `
+              -Method Get `
+              -Headers $headers
+
+          Write-Output "PAT Access Response: $($response.Content)"
 
       - name: Create Azure DevOps User Story
         shell: powershell
