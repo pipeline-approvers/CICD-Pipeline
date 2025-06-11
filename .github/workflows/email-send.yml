@@ -1,172 +1,172 @@
-name: email-send
-on:
-  workflow_dispatch:
-permissions:
-  id-token: write
-  contents: read
-jobs:
-  deploy:
-    runs-on: nu-laptop # this is a self-hosted Windows server
+# name: email-send
+# on:
+#   workflow_dispatch:
+# permissions:
+#   id-token: write
+#   contents: read
+# jobs:
+#   deploy:
+#     runs-on: nu-laptop # this is a self-hosted Windows server
     
-    # env:
-    #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   AWS_REGION: us-east-1
+#     # env:
+#     #   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#     #   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#     #   AWS_REGION: us-east-1
 
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+#     steps:
+#     - name: Checkout Code
+#       uses: actions/checkout@v3
 
-    - name: Set Variables for EST Time
-      id: step1
-      run: |
-        echo "Step 1: Setting variables for EST Time"
+#     - name: Set Variables for EST Time
+#       id: step1
+#       run: |
+#         echo "Step 1: Setting variables for EST Time"
 
-    - name: Creating Backup
-      id: step2
-      run: |
-        echo "Step 2: Creating Backup"
+#     - name: Creating Backup
+#       id: step2
+#       run: |
+#         echo "Step 2: Creating Backup"
 
-    # - name: Copy Code to the server
-    #   id: step3
-    #   run: |
-    #     # Delete git code from the previous deployment
-    #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
-    #     Remove-Item -Path $folderPath\* -Recurse -Force
-    #     # Copy the new git code to the server
-    #     $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
-    #     $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
-    #     Copy-Item -Path $source\* -Destination $destination -Recurse -Force
+#     # - name: Copy Code to the server
+#     #   id: step3
+#     #   run: |
+#     #     # Delete git code from the previous deployment
+#     #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\workspace"
+#     #     Remove-Item -Path $folderPath\* -Recurse -Force
+#     #     # Copy the new git code to the server
+#     #     $source = "${{ github.workspace }}\med\MedicaidEligibilityEnquiryTool\"
+#     #     $destination = "C:\Users\madhukar.hanumantha\Desktop\workspace\"
+#     #     Copy-Item -Path $source\* -Destination $destination -Recurse -Force
 
-    # - name: Stop IIS Service
-    #   id: step4
-    #   run: |
-    #     # Delete build files from previous deployment
-    #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
-    #     Remove-Item -Path $folderPath\* -Recurse -Force
+#     # - name: Stop IIS Service
+#     #   id: step4
+#     #   run: |
+#     #     # Delete build files from previous deployment
+#     #     $folderPath = "C:\Users\madhukar.hanumantha\Desktop\release"
+#     #     Remove-Item -Path $folderPath\* -Recurse -Force
 
-    # - name: Publish
-    #   id: step5
-    #   run: |
-    #     cd C:\Users\madhukar.hanumantha\Desktop\workspace\
-    #   continue-on-error: true
+#     # - name: Publish
+#     #   id: step5
+#     #   run: |
+#     #     cd C:\Users\madhukar.hanumantha\Desktop\workspace\
+#     #   continue-on-error: true
 
-    # - name: Rollback If Publish Fails
-    #   id: step6
-    #   if: ${{ steps.step5.outcome == 'failure' }}
-    #   run: |
-    #     echo "Step 6: Rollback If Publish Fails"
+#     # - name: Rollback If Publish Fails
+#     #   id: step6
+#     #   if: ${{ steps.step5.outcome == 'failure' }}
+#     #   run: |
+#     #     echo "Step 6: Rollback If Publish Fails"
 
-    # - name: Start IIS Service
-    #   if: always()
-    #   id: step7
-    #   run: |
-    #     echo "Step 7: Start IIS Service"
+#     # - name: Start IIS Service
+#     #   if: always()
+#     #   id: step7
+#     #   run: |
+#     #     echo "Step 7: Start IIS Service"
 
-    # - name: Run Cleanup Script
-    #   id: step8
-    #   run: |
-    #     echo "Step 8: Run Cleanup Script"
+#     # - name: Run Cleanup Script
+#     #   id: step8
+#     #   run: |
+#     #     echo "Step 8: Run Cleanup Script"
 
-    # - name: Check Deployment Status
-    #   id: check_status
-    #   continue-on-error: true
-    #   run: |
-    #     $status = "success"
-    #     $failedStep = ""
-    #     if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1" }
-    #     if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2" }
-    #     if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3" }
-    #     if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4" }
-    #     if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5" }
-    #     if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6" }
-    #     if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7" }
-    #     if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8" }
-    #     echo "Deployment $status"
-    #     echo "Failed Step: $failedStep"
-    #     echo "::set-output name=status::$status"
-    #     echo "::set-output name=failedStep::$failedStep"
-    #   shell: powershell
-    #   env:
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     AWS_REGION: us-east-1
-    #     STEP1_OUTCOME: ${{ steps.step1.outcome }}
-    #     STEP2_OUTCOME: ${{ steps.step2.outcome }}
-    #     STEP3_OUTCOME: ${{ steps.step3.outcome }}
-    #     STEP4_OUTCOME: ${{ steps.step4.outcome }}
-    #     STEP5_OUTCOME: ${{ steps.step5.outcome }}
-    #     STEP6_OUTCOME: ${{ steps.step6.outcome }}
-    #     STEP7_OUTCOME: ${{ steps.step7.outcome }}
-    #     STEP8_OUTCOME: ${{ steps.step8.outcome }}
+#     # - name: Check Deployment Status
+#     #   id: check_status
+#     #   continue-on-error: true
+#     #   run: |
+#     #     $status = "success"
+#     #     $failedStep = ""
+#     #     if ($env:STEP1_OUTCOME -eq 'failure') { $status = "failed at step 1"; $failedStep = "step 1" }
+#     #     if ($env:STEP2_OUTCOME -eq 'failure') { $status = "failed at step 2"; $failedStep = "step 2" }
+#     #     if ($env:STEP3_OUTCOME -eq 'failure') { $status = "failed at step 3"; $failedStep = "step 3" }
+#     #     if ($env:STEP4_OUTCOME -eq 'failure') { $status = "failed at step 4"; $failedStep = "step 4" }
+#     #     if ($env:STEP5_OUTCOME -eq 'failure') { $status = "failed at step 5"; $failedStep = "step 5" }
+#     #     if ($env:STEP6_OUTCOME -eq 'failure') { $status = "failed at step 6"; $failedStep = "step 6" }
+#     #     if ($env:STEP7_OUTCOME -eq 'failure') { $status = "failed at step 7"; $failedStep = "step 7" }
+#     #     if ($env:STEP8_OUTCOME -eq 'failure') { $status = "failed at step 8"; $failedStep = "step 8" }
+#     #     echo "Deployment $status"
+#     #     echo "Failed Step: $failedStep"
+#     #     echo "::set-output name=status::$status"
+#     #     echo "::set-output name=failedStep::$failedStep"
+#     #   shell: powershell
+#     #   env:
+#     #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#     #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#     #     AWS_REGION: us-east-1
+#     #     STEP1_OUTCOME: ${{ steps.step1.outcome }}
+#     #     STEP2_OUTCOME: ${{ steps.step2.outcome }}
+#     #     STEP3_OUTCOME: ${{ steps.step3.outcome }}
+#     #     STEP4_OUTCOME: ${{ steps.step4.outcome }}
+#     #     STEP5_OUTCOME: ${{ steps.step5.outcome }}
+#     #     STEP6_OUTCOME: ${{ steps.step6.outcome }}
+#     #     STEP7_OUTCOME: ${{ steps.step7.outcome }}
+#     #     STEP8_OUTCOME: ${{ steps.step8.outcome }}
 
-    - name: Send email using AWS SES SMTP
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: email-smtp.us-east-1.amazonaws.com
-        server_port: 25
-        username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
-        password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
-        subject: 'GitHub Action Test Email'
-        body: 'This is a test email sent from a GitHub Action using AWS SES.'
-        from: madhukar.hanumanthappa@nuware.com
-        to: madhukar.hanumanthappa@nuware.com
-
-
-    # - name: Send Email Notification #nuware to gmail body works
-    #   if: always()
-    #   uses: dsfx3d/action-aws-ses@v1
-    #   with:
-    #     to: madhukar.h1988@gmail.com
-    #     from: madhukar.hanumanthappa@uhsinc.com
-    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-    #     body: |
-    #       Deployment status: ${{ steps.check_status.outputs.status }}
-    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+#     - name: Send email using AWS SES SMTP
+#       uses: dawidd6/action-send-mail@v3
+#       with:
+#         server_address: email-smtp.us-east-1.amazonaws.com
+#         server_port: 25
+#         username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
+#         password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
+#         subject: 'GitHub Action Test Email'
+#         body: 'This is a test email sent from a GitHub Action using AWS SES.'
+#         from: madhukar.hanumanthappa@nuware.com
+#         to: madhukar.hanumanthappa@nuware.com
 
 
-    # - name: Send Email Notification #nuware to gmail body works
-    #   if: always()
-    #   uses: dawidd6/action-send-mail@v2
-    #   with:
-    #     server_address: smtp.gmail.com
-    #     server_port: 587
-    #     username: madjio.tv@gmail.com
-    #     password: msru wpku ghal tmjl
-    #     to: madhukar.h1988@gmail.com, madhukar.hanumanthappa@uhsinc.com, madhukar.hanumanthappa@nuware.com
-    #     from: madhukar.hanumanthappa@nuware.com
-    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-    #     body: |
-    #       Deployment status: ${{ steps.check_status.outputs.status }}
-    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+#     # - name: Send Email Notification #nuware to gmail body works
+#     #   if: always()
+#     #   uses: dsfx3d/action-aws-ses@v1
+#     #   with:
+#     #     to: madhukar.h1988@gmail.com
+#     #     from: madhukar.hanumanthappa@uhsinc.com
+#     #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+#     #     body: |
+#     #       Deployment status: ${{ steps.check_status.outputs.status }}
+#     #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+
+
+#     # - name: Send Email Notification #nuware to gmail body works
+#     #   if: always()
+#     #   uses: dawidd6/action-send-mail@v2
+#     #   with:
+#     #     server_address: smtp.gmail.com
+#     #     server_port: 587
+#     #     username: madjio.tv@gmail.com
+#     #     password: msru wpku ghal tmjl
+#     #     to: madhukar.h1988@gmail.com, madhukar.hanumanthappa@uhsinc.com, madhukar.hanumanthappa@nuware.com
+#     #     from: madhukar.hanumanthappa@nuware.com
+#     #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+#     #     body: |
+#     #       Deployment status: ${{ steps.check_status.outputs.status }}
+#     #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
 
     
-    # - name: Send Email Notification
-    #   if: always()
-    #   uses: dsfx3d/action-aws-ses@v1
-    #   with:
-    #     server_address: email-smtp.us-east-1.amazonaws.com
-    #     server_port: 587
-    #     username: ${{ secrets.SMTP_USER }}
-    #     password: ${{ secrets.SMTP_PASSWORD }}
-    #     to: madhukar.h1988@gmail.com, mahammadfayaz002@gmail.com
-    #     from: madhukar.h1988@gmail.com
-    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-    #     body: |
-    #       Deployment status: ${{ steps.check_status.outputs.status }}
-    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
-        # ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
+#     # - name: Send Email Notification
+#     #   if: always()
+#     #   uses: dsfx3d/action-aws-ses@v1
+#     #   with:
+#     #     server_address: email-smtp.us-east-1.amazonaws.com
+#     #     server_port: 587
+#     #     username: ${{ secrets.SMTP_USER }}
+#     #     password: ${{ secrets.SMTP_PASSWORD }}
+#     #     to: madhukar.h1988@gmail.com, mahammadfayaz002@gmail.com
+#     #     from: madhukar.h1988@gmail.com
+#     #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+#     #     body: |
+#     #       Deployment status: ${{ steps.check_status.outputs.status }}
+#     #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+#         # ${{ github.job }} job in workflow ${{ github.workflow }} of ${{ github.repository }} has ${{ job.status }}
         
 
-    # - name: Send Email Notification #this is working
-    #   if: always()
-    #   uses: dsfx3d/action-aws-ses@v1
-    #   with:
-    #     to: madhukar.h1988@gmail.com
-    #     from: madhukar.hanumanthappa@nuware.com
-    #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
-    #     body: |
-    #       Deployment status: ${{ steps.check_status.outputs.status }}
-    #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
+#     # - name: Send Email Notification #this is working
+#     #   if: always()
+#     #   uses: dsfx3d/action-aws-ses@v1
+#     #   with:
+#     #     to: madhukar.h1988@gmail.com
+#     #     from: madhukar.hanumanthappa@nuware.com
+#     #     subject: ${{ github.ref_name }} deployment ${{ steps.check_status.outputs.status }}
+#     #     body: |
+#     #       Deployment status: ${{ steps.check_status.outputs.status }}
+#     #       Failed Step: ${{ steps.check_status.outputs.failedStep }}
 
    
