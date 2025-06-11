@@ -32,6 +32,19 @@ jobs:
             core.setOutput("title", latestRelease.name);
             core.setOutput("body", latestRelease.body);
 
+      - name: Verify PAT Access
+        shell: powershell
+        run: |
+          $headers = @{
+              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
+          }
+
+          $response = Invoke-WebRequest -Uri "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems?api-version=6.0" `
+              -Method Get `
+              -Headers $headers
+
+          Write-Output "PAT Access Response: $($response.Content)"
+
       - name: Create Azure Work Item
         shell: powershell
         run: |
