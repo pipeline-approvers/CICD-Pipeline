@@ -1,70 +1,70 @@
-name: build-approval-dev
+# name: build-approval-dev
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-  workflow_run:
-    workflows: ["deploy-dev"]
-    types:
-      - completed
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+#   workflow_run:
+#     workflows: ["deploy-dev"]
+#     types:
+#       - completed
 
-jobs:
-  deploy-dev:
-    runs-on: nu-laptop
-    steps:
-      - name: Deploy to dev
-        run: echo "Deploying to dev environment"
-        continue-on-error: true
+# jobs:
+#   deploy-dev:
+#     runs-on: nu-laptop
+#     steps:
+#       - name: Deploy to dev
+#         run: echo "Deploying to dev environment"
+#         continue-on-error: true
 
-  approve-build:  
-    runs-on: nu-laptop
-    needs: deploy-dev
-    environment: UAT
-    outputs:
-      rejection-status: ${{ steps.check_approval.outputs.rejection-status }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+#   approve-build:  
+#     runs-on: nu-laptop
+#     needs: deploy-dev
+#     environment: UAT
+#     outputs:
+#       rejection-status: ${{ steps.check_approval.outputs.rejection-status }}
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v2
 
-      - name: Approval prompt
-        id: approval
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const { Octokit } = require("@octokit/rest");
-            const { context } = require("@actions/github");
-            const token = process.env.GITHUB_TOKEN;
-            const octokit = new Octokit({ auth: token });
+#       - name: Approval prompt
+#         id: approval
+#         uses: actions/github-script@v6
+#         with:
+#           script: |
+#             const { Octokit } = require("@octokit/rest");
+#             const { context } = require("@actions/github");
+#             const token = process.env.GITHUB_TOKEN;
+#             const octokit = new Octokit({ auth: token });
 
-            const result = await octokit.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              body: 'Do you approve the UAT deployment? Reply with "yes" or "no".'
-            });
+#             const result = await octokit.rest.issues.createComment({
+#               owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               issue_number: context.issue.number,
+#               body: 'Do you approve the UAT deployment? Reply with "yes" or "no".'
+#             });
 
-            return result.data.id;
+#             return result.data.id;
 
-      - name: Check approval status
-        id: check_approval
-        run: |
-          APPROVAL=$(gh issue view ${{ github.event.issue.number }} --json comments --jq '.comments[-1].body')
-          if [ "$APPROVAL" == "no" ]; then
-            echo "::set-output name=rejection-status::true"
-          else
-            echo "::set-output name=rejection-status::false"
-          fi
+#       - name: Check approval status
+#         id: check_approval
+#         run: |
+#           APPROVAL=$(gh issue view ${{ github.event.issue.number }} --json comments --jq '.comments[-1].body')
+#           if [ "$APPROVAL" == "no" ]; then
+#             echo "::set-output name=rejection-status::true"
+#           else
+#             echo "::set-output name=rejection-status::false"
+#           fi
 
-      - name: Deploy to UAT
-        if: steps.check_approval.outputs.rejection-status == 'false'
-        run: echo "Deploying to UAT environment..."
+#       - name: Deploy to UAT
+#         if: steps.check_approval.outputs.rejection-status == 'false'
+#         run: echo "Deploying to UAT environment..."
 
-  roll-back:
-    runs-on: nu-laptop
-    needs: approve-build
-    if: ${{ needs.approve-build.outputs.rejection-status == 'true' }}
-    steps:
-      - name: Rollback dev deployment
-        run: echo "Rolling back dev deployment..."
+#   roll-back:
+#     runs-on: nu-laptop
+#     needs: approve-build
+#     if: ${{ needs.approve-build.outputs.rejection-status == 'true' }}
+#     steps:
+#       - name: Rollback dev deployment
+#         run: echo "Rolling back dev deployment..."
