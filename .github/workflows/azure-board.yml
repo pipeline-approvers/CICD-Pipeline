@@ -5,7 +5,7 @@ on:
       - 'release-v*.*'
 jobs:
   create-task:
-    runs-on: nu-laptop  # Fixed runner name
+    runs-on: nu-laptop  # Assuming this is a valid Windows self-hosted runner
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -33,13 +33,21 @@ jobs:
             core.setOutput("body", latestRelease.body);
 
       - name: Create Azure Work Item
+        shell: powershell
         run: |
-          curl -X POST -H "Content-Type: application/json" \
-          -H "Authorization: Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}" \
-          -d '{
-            "fields": {
-              "System.Title": "Release: ${{ steps.release.outputs.title }}",
-              "System.Description": "${{ steps.release.outputs.body }}"
-            }
-          }' \
-          "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems/$task?api-version=6.0"
+          $headers = @{
+              "Content-Type" = "application/json"
+              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
+          }
+
+          $body = @{
+              "fields" = @{
+                  "System.Title" = "Release: ${{ steps.release.outputs.title }}"
+                  "System.Description" = "${{ steps.release.outputs.body }}"
+              }
+          } | ConvertTo-Json -Depth 3
+
+          Invoke-WebRequest -Uri "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems/$task?api-version=6.0" `
+              -Method Post `
+              -Headers $headers `
+              -Body $body
