@@ -1,0 +1,45 @@
+name: Azure-Board
+on:
+  push:
+    tags:
+      - 'release-v*.*'
+jobs:
+  create-task:
+    runs-on: nu-laptop  # Fixed runner name
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Get Release Info
+        uses: actions/github-script@v6
+        id: release
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const { data: releases } = await github.rest.repos.listReleases({
+              owner,
+              repo,
+            });
+
+            if (releases.length === 0) {
+              throw new Error("No releases found.");
+            }
+
+            const latestRelease = releases[0];
+            console.log(`Release: ${latestRelease.tag_name}, ${latestRelease.name}`);
+            
+            core.setOutput("tag_name", latestRelease.tag_name);
+            core.setOutput("title", latestRelease.name);
+            core.setOutput("body", latestRelease.body);
+
+      - name: Create Azure Work Item
+        run: |
+          curl -X POST -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}" \
+          -d '{
+            "fields": {
+              "System.Title": "Release: ${{ steps.release.outputs.title }}",
+              "System.Description": "${{ steps.release.outputs.body }}"
+            }
+          }' \
+          "https://dev.azure.com/Madhanum/Github-Notifications/_apis/wit/workitems/$task?api-version=6.0"
