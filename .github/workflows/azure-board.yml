@@ -39,7 +39,7 @@ jobs:
               "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
           }
 
-          $response = Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems?api-version=6.0" `
+          $response = Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems?api-version=7.0" `
               -Method Get `
               -Headers $headers
 
