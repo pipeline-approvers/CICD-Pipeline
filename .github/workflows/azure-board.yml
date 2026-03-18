@@ -1,67 +1,67 @@
-name: Azure-Board1
-on:
-  push:
-    tags:
-      - 'release-v*.*'
-jobs:
-  create-task:
-    runs-on: nu-laptop  # Assuming this is your Windows self-hosted runner
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+# name: Azure-Board1
+# on:
+#   push:
+#     tags:
+#       - 'release-v*.*'
+# jobs:
+#   create-task:
+#     runs-on: nu-laptop  # Assuming this is your Windows self-hosted runner
+#     steps:
+#       - name: Checkout Repository
+#         uses: actions/checkout@v3
 
-      - name: Get Release Info
-        uses: actions/github-script@v6
-        id: release
-        with:
-          script: |
-            const { owner, repo } = context.repo;
-            const { data: releases } = await github.rest.repos.listReleases({
-              owner,
-              repo,
-            });
+#       - name: Get Release Info
+#         uses: actions/github-script@v6
+#         id: release
+#         with:
+#           script: |
+#             const { owner, repo } = context.repo;
+#             const { data: releases } = await github.rest.repos.listReleases({
+#               owner,
+#               repo,
+#             });
 
-            if (releases.length === 0) {
-              throw new Error("No releases found.");
-            }
+#             if (releases.length === 0) {
+#               throw new Error("No releases found.");
+#             }
 
-            const latestRelease = releases[0];
-            console.log(`Release: ${latestRelease.tag_name}, ${latestRelease.name}`);
+#             const latestRelease = releases[0];
+#             console.log(`Release: ${latestRelease.tag_name}, ${latestRelease.name}`);
             
-            core.setOutput("tag_name", latestRelease.tag_name);
-            core.setOutput("title", latestRelease.name);
-            core.setOutput("body", latestRelease.body);
+#             core.setOutput("tag_name", latestRelease.tag_name);
+#             core.setOutput("title", latestRelease.name);
+#             core.setOutput("body", latestRelease.body);
 
-      - name: Verify PAT Access
-        shell: powershell
-        run: |
-          $headers = @{
-              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
-          }
+#       - name: Verify PAT Access
+#         shell: powershell
+#         run: |
+#           $headers = @{
+#               "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
+#           }
 
-          $response = Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems?api-version=7.0" `
-              -Method Get `
-              -Headers $headers
+#           $response = Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems?api-version=7.0" `
+#               -Method Get `
+#               -Headers $headers
 
-          Write-Output "PAT Access Response: $($response.Content)"
+#           Write-Output "PAT Access Response: $($response.Content)"
 
-      - name: Create Azure DevOps User Story
-        shell: powershell
-        run: |
-          $headers = @{
-              "Content-Type" = "application/json"
-              "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
-          }
+#       - name: Create Azure DevOps User Story
+#         shell: powershell
+#         run: |
+#           $headers = @{
+#               "Content-Type" = "application/json"
+#               "Authorization" = "Bearer ${{ secrets.AZURE_DEVOPS_TOKEN }}"
+#           }
 
-          $body = @{
-              "fields" = @{
-                  "System.Title" = "Release: ${{ steps.release.outputs.title }}"
-                  "System.Description" = "${{ steps.release.outputs.notes }}"
-                  "System.WorkItemType" = "User Story"
-              }
-          } | ConvertTo-Json -Depth 3
+#           $body = @{
+#               "fields" = @{
+#                   "System.Title" = "Release: ${{ steps.release.outputs.title }}"
+#                   "System.Description" = "${{ steps.release.outputs.notes }}"
+#                   "System.WorkItemType" = "User Story"
+#               }
+#           } | ConvertTo-Json -Depth 3
 
-          Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems/User%20Story?api-version=6.0" `
-              -Method Post `
-              -Headers $headers `
-              -Body $body
+#           Invoke-WebRequest -Uri "https://dev.azure.com/test-mh/test/_apis/wit/workitems/User%20Story?api-version=6.0" `
+#               -Method Post `
+#               -Headers $headers `
+#               -Body $body
