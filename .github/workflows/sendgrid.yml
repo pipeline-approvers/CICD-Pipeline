@@ -1,29 +1,29 @@
-name: Send Email Notification
-on:
-  workflow_dispatch
+# name: Send Email Notification
+# on:
+#   workflow_dispatch
 
-jobs:
-  send-email:
-    runs-on: nu-laptop
-    steps:
-      - name: Send Email via PowerShell
-        shell: powershell
-        run: |
-          $apiKey = "${{ secrets.SENDGRID_API_KEY }}"
-          $toEmail = "madhukar.h1988@gmail.com"
-          $subject = "GitHub Actions Notification"
-          $body = "Your workflow has completed successfully!\nDeployment is done."
+# jobs:
+#   send-email:
+#     runs-on: nu-laptop
+#     steps:
+#       - name: Send Email via PowerShell
+#         shell: powershell
+#         run: |
+#           $apiKey = "${{ secrets.SENDGRID_API_KEY }}"
+#           $toEmail = "madhukar.h1988@gmail.com"
+#           $subject = "GitHub Actions Notification"
+#           $body = "Your workflow has completed successfully!\nDeployment is done."
           
-          $headers = @{
-            "Authorization" = "Bearer $apiKey"
-            "Content-Type" = "application/json"
-          }
+#           $headers = @{
+#             "Authorization" = "Bearer $apiKey"
+#             "Content-Type" = "application/json"
+#           }
 
-          $payload = @{
-            "personalizations" = @(@{ "to" = @(@{ "email" = $toEmail }) })
-            "from" = @{ "email" = "madhukar.hanumanthappa@uhsinc.com" }
-            "subject" = $subject
-            "content" = @(@{ "type" = "text/plain"; "value" = $body })
-          } | ConvertTo-Json -Depth 10
+#           $payload = @{
+#             "personalizations" = @(@{ "to" = @(@{ "email" = $toEmail }) })
+#             "from" = @{ "email" = "madhukar.hanumanthappa@uhsinc.com" }
+#             "subject" = $subject
+#             "content" = @(@{ "type" = "text/plain"; "value" = $body })
+#           } | ConvertTo-Json -Depth 10
 
-          Invoke-RestMethod -Uri "https://api.sendgrid.com/v3/mail/send" -Method Post -Headers $headers -Body $payload
+#           Invoke-RestMethod -Uri "https://api.sendgrid.com/v3/mail/send" -Method Post -Headers $headers -Body $payload
